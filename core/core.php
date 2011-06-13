@@ -1216,7 +1216,7 @@ function _linkp($attr, $slash = false, $c = '/')
 		}
 		$url = $arg . ((f($arg) && $slash === true) ? $c : '');
 	} else {
-		$url = $attr . (($slash === true) ? $c : '');
+		$url = $attr . (($slash === true) ? (f($attr) ? $c : '') : '');
 	}
 	return $url;
 }
