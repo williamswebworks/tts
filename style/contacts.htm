@@ -1,0 +1,263 @@
+<!-- INCLUDE page.header.htm -->
+
+<div id="mainframe">
+<div class="mainframe_pad">
+<!-- IF MODE == 'home' -->
+<!-- ELSEIF MODE == 'create' -->
+<h3>{L_CONTACT_CREATE}.</h3>
+
+<form action="{_SELF}" method="post" id="form_contact">
+<fieldset>
+	<input type="hidden" id="contact_type" name="contact_type" value="" />
+	
+	<dl>
+		<dt>{L_CONTACT_FIELDS_FIRSTNANE}</dt>
+		<dd><input type="text" id="contact_firstname" name="contact_firstname" size="60" maxlength="60" value="" /></dd>
+	</dl>
+	<dl>
+		<dt>{L_CONTACT_FIELDS_LASTNAME}</dt>
+		<dd><input type="text" id="contact_lastname" name="contact_lastname" size="60" maxlength="60" value="" /></dd>
+	</dl>
+	<dl>
+		<dt>{L_CONTACT_FIELDS_NAME_SHOW}</dt>
+		<dd><input type="text" id="contact_show" name="contact_show" size="60" maxlength="60" value="" /></dd>
+	</dl>
+	<dl>
+		<dt>{L_CONTACT_FIELDS_USERNAME}</dt>
+		<dd><input type="text" id="contact_username" name="contact_username" size="60" maxlength="60" value="" /></dd>
+	</dl>
+	<dl>
+		<dt>{L_GENDER}</dt>
+		<dd>{.OPTION:contact_gender:(1 => 'MALE', 2 => 'FEMALE')}</dd>
+	</dl>
+	<dl>
+		<dt>{L_FORMS_STATUS_ACTIVE}</dt>
+		<dd>{.CHECK:contact_active:1}</dd>
+	</dl>
+	<dl>
+		<dt>{L_DO_ADMINISTRADOR}</dt>
+		<dd>{.CHECK:contact_admin:0}</dd>
+	</dl>
+	<!-- BEGIN hide -->
+	<dl>
+		<dt>{L_FORMS_AUTO_SESSION}</dt>
+		<dd>{.CHECK:contact_autos:0}</dd>
+	</dl>
+	<!-- END hide -->
+	
+	<div class="m_top_mid a_center">
+		<p>{L_CONTACT_TYPE}</p>
+		<!-- BEGIN contact_type -->
+		<input type="button" class="button" id="group_{contact_type.ID}" value="{contact_type.NAME}" />
+		<!-- END contact_type -->
+	</div>
+</fieldset>
+</form>
+
+<script>
+$(contacts.members.startup);
+</script>
+<!-- ELSEIF MODE == 'search' -->
+	<h3>{L_SEARCH_CONTACT}.</h3>
+	
+	<!-- IF IS_SUBMIT && ! RESULTS_PAGE -->
+	<!-- ERROR {L_CONTACTS_NO_RESULT} -->
+	<!-- ENDIF -->
+	
+	<div class="m_mid" id="search-box">
+	<form action="{U_CONTACTS_X1:SEARCH}" method="post" id="multi_search" onsubmit="return _.form.sEmpty(this);">
+	<ul id="search_list" class="ul_none"> </ul>
+		<div id="template_row" style="display:none;">
+		<li id="srow_dd">
+		<div class="float-holder ie-widthfix">
+			<div class="wt7 float_left">
+				&nbsp;<span id="svbox_dd">Y/O <input type="checkbox" id="vbox_dd" name="_vbox[_ee]" value="1" checked="checked" /></span>
+			</div>
+			<div class="w2 float_left">
+				<select class="w9" id="table_dd" name="_table[]">
+				<!-- BEGIN search_tables -->
+				<option value="{search_tables.V_VALUE}">{search_tables.V_NAME}</option>
+				<!-- END search_tables -->
+				</select>
+			</div>
+			<div class="w3 float_left">
+				<div id="rfield_dd" class="w0">
+				<select class="w9" id="field_dd" name="_field[]">
+				<!-- BEGIN relation_field -->
+				<option value="{relation_field.V_VALUE}">{relation_field.V_NAME}</option>
+				<!-- END relation_field -->
+				</select>
+				</div>
+			</div>
+			<div id="random_dd" class="w3 float_left">
+				<input type="text" class="w9" id="vinput_dd" name="_input[]" value="" />
+			</div>
+			<div class="wt7 float_left a_center">
+				<input type="button" class="btn_ok" id="row_add_dd" value="+" /> <input type="button" class="btn_cn" id="row_rem_dd" value="-" /> 
+			</div>
+		</div>
+		</li>
+	</ul>
+	</div>
+	
+	<div class="m_top_mid a_center">
+		<input type="hidden" name="submit" value="1" />
+		<input type="submit" class="button" name="submit" value="{L__SUBMIT}" />
+	</div>
+	</form>
+	
+	<script{SCRIPT_TYPE}>
+	{CDATA_BEGIN}
+	_.config.store({computer_search_stable: '{U_CONTACTS_X1:SEARCH_X2:TABLE}', computer_search_sfield: '{U_CONTACTS_X1:SEARCH_X2:FIELD}'});
+	$(computer.search.startup);
+	{CDATA_END}
+	</script>
+	</div>
+	
+	<!-- IF RESULTS_PAGE -->
+	
+	<!-- BEGIN search -->
+	<!-- BEGIN row -->
+	<!-- IF row.S_NUM_FIRST -->
+	<div id="tab_format" style="display:none;">
+		<div id="tab_scroll_dd">
+		<ul class="tab ul_none_mini float-holder ie-widthfix">
+		<!-- BEGIN tab -->
+		<li id="tab_{tab.V_TAG}_dd">{tab.V_TITLE}</li>
+		<!-- END tab -->
+		</ul>
+		<div id="tab_frame_dd" class="tab_frame"></div>
+		</div>
+	</div>
+	
+	<div id="result_area">
+	<div id="clear_results" class="alt_tool">{L_CONTACTS_CLEAR}</div>
+	<h3 class="z">{L_RESULTS}</h3>
+	
+	<!-- IF search.NUMS != '' -->
+	<ul class="pagination float-holder ie-widthfix"><li>{search.NUMS}</li></ul>
+	<!-- ENDIF -->
+	
+	<ul id="list_results" class="el_list ul_none_mini">
+	<!-- ENDIF -->
+	<li id="row_{row.V_ID}" class="radius ticket_status_{row.V_STATUS}">{row.V_TITLE}</li>
+	<!-- IF row.S_NUM_END -->
+	</ul>
+	</div>
+	
+	<!-- IF search.NUMS != '' -->
+	<ul class="m_top_mid pagination float-holder ie-widthfix"><li>{search.NUMS}</li></ul>
+	<!-- ENDIF -->
+	<!-- ENDIF -->
+	<!-- END row -->
+	
+	<script{SCRIPT_TYPE}>
+	{CDATA_BEGIN}
+	_.config.store({
+		xtab_tags: '<!-- BEGIN row --><!-- IF ! row.S_ROW_COUNT --><!-- BEGIN tab --><!-- IF tab.S_ROW_COUNT --> <!-- ENDIF -->{tab.V_TAG}<!-- END tab --><!-- ENDIF --><!-- END row -->',
+		u_tab: '{U_SEARCH_TAB}'
+	});
+	_.observe('clear_results', 'result_area');
+	_.tab.observe('list_results');
+	{CDATA_END}
+	</script>
+	<!-- END search -->
+	
+	<script>
+	$('search-box').hide();
+	</script>
+	<!-- ENDIF -->
+<!-- ELSEIF MODE == 'groups' -->
+<h3>{L_GROUPS}.</h3>
+
+<div class="m_top_big tab_frame">
+<div class="field_add">
+	<input type="button" class="button" id="br_add" value="{L_GROUP_ADD}" />
+	<input type="button" class="button" id="br_edit" value="{L_GROUP_EDIT}" style="display: none;" />
+	
+	<form id="r_add" action="{U_CONTACTS_X1:GROUPS_X2:CREATE}" method="post" class="formset" onsubmit="return _.form.submit(this, ul.f_add);" style="display:none;">
+		<fieldset class="none">
+			<dl>
+				<dt>{L_CONTACT_FIELDS_FIRSTNAME}</dt>
+				<dd><input type="text" id="g_name" name="g_name" size="60" maxlength="60" value="" /></dd>
+			</dl>
+			<dl>
+				<dt>{L_GROUP_EMAIL}</dt>
+				<dd><input type="text" id="g_email" name="g_email" size="60" maxlength="60" value="" /></dd>
+			</dl>
+			<dl>
+				<dt>{L_GROUP_MOD}</dt>
+				<dd><input type="text" id="g_mod" name="g_mod" size="60" maxlength="60" value="" /></dd>
+			</dl>
+			<dl>
+				<dt>{L_GROUP_COLOR}</dt>
+				<dd><input type="text" id="g_color" name="g_color" size="60" maxlength="60" value="" /></dd>
+			</dl>
+			
+			<div class="m_top_mid a_center">
+				<input type="submit" class="form_submit" name="submit" value="{L__SEND}" />
+				<input type="button" id="rx_add" class="form_cancel" name="cancel" value="{L__CANCEL}" />
+			</div>
+		</fieldset>
+	</form>
+	
+	<form id="r_edit" action="{U_CONTACTS_X1:GROUPS_X2:MODIFY}" method="post" class="formset" onsubmit="return _.form.submit(this, ul.modify_c);" style="display:none;">
+		<fieldset class="none">
+			<dl>
+				<dt>{L_FORMS_NAME}</dt>
+				<dd><input type="text" id="r_name" name="r_name" value="" /></dd>
+			</dl>
+			<dl>
+				<dt>{L_GROUP_EMAIL}</dt>
+				<dd><input type="text" id="r_email" name="r_email" value="" /></dd>
+			</dl>
+			<dl>
+				<dt>{L_GROUP_MOD}</dt>
+				<dd><input type="text" id="r_mod" name="r_mod" value="" /></dd>
+			</dl>
+			<dl>
+				<dt>{L_GROUP_COLOR}</dt>
+				<dd><input type="text" id="r_color" name="r_color" value="" /></dd>
+			</dl>
+			
+			<div class="a_center m_top_mid">
+				<input type="hidden" id="r_el" name="el" value="" />
+				<input type="submit" class="form_submit" name="submit" value="{L__SEND}" />
+				<input type="button" id="rx_edit" class="form_cancel" name="cancel" value="{L__CANCEL}" />
+			</div>
+		</fieldset>
+	</form>
+	
+	<!-- BEGIN groups -->
+	<ul id="groups" class="grid">
+	<!-- BEGIN row -->
+	<li id="rowr_{row.ID}_{row.ID}"<!-- IF row.S_ROW_MOD --> class="row1"<!-- ENDIF -->><img id="remove_{row.ID}" src="{S_VISUAL}field_delete.png" /> <img id="modify_{row.ID}" src="{S_VISUAL}field_edit.png" /> <span class="group_cell group_{row.EMAIL}">{row.NAME}</span> ({row.EMAIL})</li>
+	<!-- END row -->
+	</ul>
+	<!-- END groups -->
+</div>
+</div>
+
+<script{SCRIPT_TYPE}>
+{CDATA_BEGIN}
+_.config.store({
+	u_redit: '{U_CONTACTS_X1:GROUPS_X2:CALL}',
+	u_rdelete: '{U_CONTACTS_X1:GROUPS_X2:REMOVE}',
+	g_remove_confirm: '{L_F_DELETE_VALUE}'
+});
+
+<!-- IF $A[contacts_field_create] -->
+$('br_add')._click(ul.watch_f);
+<!-- ENDIF -->
+
+<!-- IF $A[contacts_category_update] -->
+ul.watch('groups');
+<!-- ENDIF -->
+{CDATA_END}
+</script>
+
+<!-- ENDIF -->
+</div>
+</div>
+
+<!-- INCLUDE page.footer.htm -->

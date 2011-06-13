@@ -1,0 +1,70 @@
+<!-- INCLUDE page.header.htm -->
+
+<div id="mainframe">
+<div class="mainframe_pad">
+	<h3>Creaci&oacute;n de Campos de B&uacute;squeda.</h3>
+	
+	<div class="m_top_mid options">
+	<form action="{_SELF}" method="post">
+	
+	<div class="input">
+		<label for="table_cat">Categor&iacute;a</label>
+		<!-- BEGIN cat -->
+		<select name="table_cat" id="table_cat">
+		<!-- BEGIN row -->
+			<option value="{row.ID}">{row.ALIAS}</option>
+			<!-- END row -->
+		</select>
+		<!-- END cat -->
+	</div>
+	
+	<div class="m_top_mid input">
+		<label for="table_alias">Alias de tabla</label>
+		<input type="text" id="table_alias" name="table_alias" size="50" maxlength="50" value="" />
+	</div>
+	
+	<div class="m_top_mid input">
+		<label for="table_name">Nombre de tabla</label>
+		<input type="text" id="table_name" name="table_name" size="50" maxlength="50" value="" />
+	</div>
+	
+	<div class="m_top_mid input">
+		<label for="relation_field">Nombre de campo</label>
+		<input type="text" id="relation_field" name="relation_field" size="50" maxlength="50" value="" />
+	</div>
+	
+	<div class="m_top_mid input">
+		<label for="relation_name">Nombre de relaci&oacute;n</label>
+		<input type="text" id="relation_name" name="relation_name" size="50" maxlength="50" value="" />
+	</div>
+	
+	<div class="m_top_mid input">
+		<label for="relation_tables">Relaci&oacute;n de tablas</label>
+		<textarea id="relation_tables" name="relation_tables" cols="48" rows="5"></textarea>
+	</div>
+	
+	<div class="m_top_mid input">
+		<label for="relation_fields">Relaci&oacute;n de campos</label>
+		<textarea id="relation_fields" name="relation_fields" cols="48" rows="5"></textarea>
+	</div>
+	
+	<div class="m_top_mid input">
+		<label for="relation_input">Tipo de campo</label>
+		<input type="text" id="relation_input" name="relation_input" size="50" maxlength="50" value="" />
+	</div>
+	
+	<div class="m_top_mid input">
+		<label for="relation_select">Relaci&oacute;n de campos extra</label>
+		<input type="text" id="relation_select" name="relation_select" size="50" maxlength="50" value="" />
+	</div>
+	
+	<div class="m_top_mid a_center">
+		<input type="submit" class="button" id="submit" name="submit" value="{L_SAVE}" />
+	</div>
+	
+	</form>
+	</div>
+</div>
+</div>
+
+<!-- INCLUDE page.footer.htm -->

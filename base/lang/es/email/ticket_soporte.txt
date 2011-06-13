@@ -1,0 +1,19 @@
+Charset: iso-8859-1
+
+Buen d&iacute;a {FULLNAME},
+
+Su solicitud &quot;{SUBJECT}&quot; ha sido recibida, puede consultar el estado en:
+
+{TICKET_URL}
+
+En este momento est&aacute; siendo asignada a uno de nuestros colaboradores para su soluci&oacute;n. La atenci&oacute;n y programaci&oacute;n de su solicitud depender&aacute; de la disponibilidad del t&eacute;cnico asignado y la cola de tareas pendientes.
+
+Todas las solicitudes recibidas, hechas dentro o fuera de nuestro sistema, ser&aacute;n programadas respetando el orden de ingreso dando una ponderaci&oacute;n de prioridad seg&uacute;n el caso particular.
+
+Gracias por utilizar nuestro servicio, este nos permitir&aacute; brindar una mejor atenci&oacute;n a sus requerimientos.
+Cualquier comentario, duda o sugerencia no dude en contactarnos.
+
+Atentos saludos,
+
+Administrador
+TTSy

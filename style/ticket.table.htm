@@ -1,0 +1,138 @@
+<!-- INCLUDE page.header.htm -->
+
+<div id="mainframe" class="ie-widthfix float-holder">
+	<div class="mainframe_pad">
+	<!-- IF MODE == 'home' -->
+	<!-- BEGIN tickets -->
+	<div class="m_btm_tiny"><h3>{L_LIST_TICKET}. &bull; {tickets.TITLE}</h3></div>
+	<!-- END tickets -->
+	
+	<!-- BEGIN search -->
+	<!-- IF !(search.TOTAL_TICKETS) -->
+	<div class="m_btm_tiny"><h3>{L_LIST_TICKET}. &bull; {L_SEARCH}</h3></div>
+	<!-- ENDIF -->
+	<!-- END search -->
+	
+	<div id="search-box">
+	
+	<div class="float-holder ie-widthfix m_top_mid options">
+		<div class="w6 float_left">
+			<!-- BEGIN mode -->
+			<!-- IF $A[ticket_chown] -->
+			<div class="input">
+				<label for="ticket_chown">{L_TICKET_ASSIGNED_TECH}</label>
+				<input type="text" class="" id="ticket_chown" name="ticket_chown" size="50" maxlength="50" value="{V_CHOWN}" />
+			</div>
+			<!-- ENDIF -->
+			
+			<div class="m_top_mid">
+				<select name="view" id="view">
+					<option value="-1">{L_SELECT}</option>
+					<!-- BEGIN row -->
+					<option value="{row.URL}"{row.SELECTED}>{row.NAME}</option>
+					<!-- END row -->
+				</select>
+			</div>
+			<!-- END mode -->
+		</div>
+		<div class="w3 float_right ticket_legend">
+			<!-- IF $A[ticket_list_table] -->
+			<!-- BEGIN tickets -->
+			<div class="m_btm_mid a_right"><a href="{tickets.U_ETABLE}">{tickets.G_ETABLE}</a></div>
+			<!-- END tickets -->
+			<!-- ENDIF -->
+			
+			<!-- BEGIN status -->
+			<ul id="status_list" class="ul_none_mini">
+				<!-- BEGIN row -->
+				<li id="status_{row.ALIAS}" class="ticket_status_{row.ALIAS}">{row.NAME}</li>
+				<!-- END row -->
+			</ul>
+			<!-- END status -->
+		</div>
+	</div>
+	
+	<!-- BEGIN tickets -->
+	<!-- IF tickets.NUMS != '' -->
+	<ul class="pagination float-holder ie-widthfix"><li>{tickets.NUMS}</li></ul>
+	<!-- ENDIF -->
+	
+	<table class="data_table">
+		<tr class="table_row">
+			<td>T&iacute;tulo</td>
+			<td>Asignado</td>
+			<td>Categor&iacute;a</td>
+			<td>Solicitante</td>
+			<td>Fecha/Hora</td>
+			<td>Texto</td>
+			<td>Estado</td>
+		</tr>
+		<!-- BEGIN row -->
+		<tr class="{row.V_STATUS}">
+			<td><a href="{row.V_URL}">{row.V_TITLE}</a></td>
+			<td>{row.V_AUTHOR}</td>
+			<td>{row.V_CAT}</td>
+			<td>
+				<!-- BEGIN techs -->
+				<!-- BEGIN rowt -->
+				{rowt.NAME}
+				<!-- END rowt -->
+				<!-- END techs -->
+			</td>
+			<td>{row.V_START}</td>
+			<td>{row.V_TEXT}</td>
+			<td>{row.V_STATUS_NAME}</td>
+		</tr>
+		<!-- BEGIN notes -->
+		<!-- BEGIN rown -->
+		<tr>
+			<td>&nbsp;</td>
+			<td>{rown.REALNAME}</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>{rown.TIME}</td>
+			<td colspan="4">{rown.TEXT}</td>
+		</tr>
+		<!-- END rown -->
+		<!-- END notes -->
+		<!-- END row -->
+		<tr class="table_row">
+			<td>T&iacute;tulo</td>
+			<td>Asignado</td>
+			<td>Categor&iacute;a</td>
+			<td>Solicitante</td>
+			<td>Fecha/Hora</td>
+			<td>Texto</td>
+			<td>Estado</td>
+		</tr>
+	</table>
+	
+	<!-- IF tickets.NUMS != '' -->
+	<ul class="m_top_mid pagination float-holder ie-widthfix"><li>{tickets.NUMS}</li></ul>
+	<!-- ENDIF -->
+	<!-- END tickets -->
+	
+	<script{SCRIPT_TYPE}>
+	{CDATA_BEGIN}
+	$('view')._change(ticket.list.selectmode);
+	<!-- BEGIN tickets -->
+	_.config.store('u_go', '{tickets.U_TICKET}');
+	_.config.store('u_status', '{tickets.U_STATUS}');
+	ticket.list.watch();
+	<!-- END tickets -->
+	{CDATA_END}
+	</script>
+	
+	<!-- BEGIN noresults -->
+	<!-- ERROR {L_CONTACTS_NO_RESULT} -->
+	<!-- END noresults -->
+	</div>
+	<!-- ELSEIF MODE == 'search' -->
+	<!-- ELSEIF MODE == 'view' -->
+	<!-- ELSEIF MODE == 'create' -->
+	<!-- ELSEIF MODE == 'cat' -->
+	<!-- ENDIF -->
+	</div>
+</div>
+
+<!-- INCLUDE page.footer.htm -->

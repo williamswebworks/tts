@@ -1,0 +1,46 @@
+<input type="hidden" name="{WHERE_NAME}" value="{WHERE_VALUE}" />
+
+<!-- BEGIN inputs -->
+<fieldset class="none">
+	<!-- BEGIN row -->
+	<dl>
+		<dt>{row.LABEL}</dt>
+		<dd>
+			<!-- IF row.TYPE == 'select' -->
+			<!-- BEGIN select -->
+			<select id="{row.NAME}" name="{row.NAME}">
+			<!-- BEGIN row -->
+			<option value="{row.OPTION_ID}"{row.SELECTED}>{row.OPTION_NAME}</option>
+			<!-- END row -->
+			</select>
+			<!-- END select -->
+			<!-- ELSEIF row.TYPE == 'textarea' -->
+			<textarea id="{row.NAME}" name="{row.NAME}" rows="5" cols="25">{row.VALUE}</textarea>
+			<!-- ELSEIF row.TYPE == 'calendar' -->
+			<input type="text" id="{row.NAME}" name="{row.NAME}" value="{row.VALUE}" />
+			<!-- ELSEIF row.TYPE == 'checkbox' -->
+			<input type="checkbox" id="{row.NAME}" name="{row.NAME}"{row.CHECKED} value="1" />
+			<!-- ELSE -->
+			<input type="{row.TYPE}" id="{row.NAME}" name="{row.NAME}" value="{row.VALUE}" />
+			<!-- ENDIF -->
+		</dd>
+	</dl>
+	<!-- END row -->
+</fieldset>
+<!-- END inputs -->
+
+<script{SCRIPT_TYPE}>
+{CDATA_BEGIN}
+<!-- BEGIN inputs -->
+<!-- BEGIN row -->
+<!-- IF row.TYPE == 'calendar' -->
+$('{row.NAME}').calendar();
+<!-- ENDIF -->
+
+<!-- IF ! row.S_ROW_COUNT -->
+_._focus('{row.NAME}');
+<!-- ENDIF -->
+<!-- END row -->
+<!-- END inputs -->
+{CDATA_END}
+</script>

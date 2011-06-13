@@ -1,0 +1,30 @@
+<!-- INCLUDE page.head.htm -->
+
+<div id="header">
+	<h1><a href="{U_HOME}">{L_PAGE_HEADER}</a></h1>
+	<!-- IF NAVIGATION != '' -->
+	<div id="navigation">
+		{NAVIGATION}
+	</div>
+	<!-- ENDIF -->
+</div>
+
+<div id="e_notice"></div>
+<div id="gutter"></div>
+
+<div id="mside" class="float-holder ie-widthfix">
+<div class="inside">
+	<blockquote>
+		<h3>{S_USERNAME}</h3>
+		<p><a href="{U_SIGNOUT}">{L_LOGOUT}</a></p>
+	</blockquote>
+	
+	<!-- BEGIN tree -->
+	<ul class="ul_none f">
+	<!-- BEGIN row -->
+	<li><div><a href="{row.V_LINK}">{row.V_NAME}</a></div><!-- BEGIN sub1 --><!-- IF sub1.S_NUM_FIRST --><ul><!-- ENDIF --><li><a href="{sub1.V_LINK}">{sub1.V_NAME}</a></li><!-- IF sub1.S_NUM_END --></ul><!-- ENDIF --><!-- END sub1 --></li>
+	<!-- END row -->
+	</ul>
+	<!-- END tree -->
+</div>
+</div>

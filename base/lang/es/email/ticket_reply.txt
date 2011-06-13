@@ -1,0 +1,19 @@
+Charset: iso-8859-1
+
+Buen d&iacute;a,
+
+Env&iacute;o una respuesta para el requerimiento &quot;{SUBJECT}&quot;
+Puede consultar el requerimiento en:
+
+{TICKET_URL}
+
+El mensaje es:
+############################
+
+{MESSAGE}
+
+############################
+
+Atentamente,
+
+{FULLNAME}

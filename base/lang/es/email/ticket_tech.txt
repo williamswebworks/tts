@@ -1,0 +1,12 @@
+Charset: iso-8859-1
+
+Buen d&iacute;a,
+
+He enviado una nueva solicitud de asistencia t&eacute;cnica.
+Puede consultar el requerimiento en:
+
+{TICKET_URL}
+
+Atentamente,
+
+{FULLNAME}

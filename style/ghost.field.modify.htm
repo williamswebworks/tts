@@ -1,0 +1,47 @@
+<input type="hidden" name="{WHERE_NAME}" value="{WHERE_VALUE}" />
+
+<fieldset class="none">
+	<!-- BEGIN oslist -->
+	<dl>
+		<dt>{L_LICENSE_OS}</dt>
+		<dd>
+			<select id="os_id" name="os_id">
+			<!-- BEGIN row -->
+			<option value="{row.ID}">{row.NAME}</option>
+			<!-- END row -->
+			</select>
+		</dd>
+	</dl>
+	<!-- END oslist -->
+	<dl>
+		<dt>{LABEL}</dt>
+		<dd>
+			<!-- IF TYPE == 'select' -->
+			<!-- BEGIN select -->
+			<select id="{INPUT_NAME}" name="{INPUT_NAME}">
+			<!-- BEGIN row -->
+			<option value="{row.OPTION_ID}"{row.SELECTED}>{row.OPTION_NAME}</option>
+			<!-- END row -->
+			</select>
+			<!-- END select -->
+			<!-- ELSEIF TYPE == 'textarea' -->
+			<textarea id="{INPUT_NAME}" name="{INPUT_NAME}" rows="5" cols="25">{INPUT_VALUE}</textarea>
+			<!-- ELSEIF TYPE == 'calendar' -->
+			<input type="text" id="{INPUT_NAME}" name="{INPUT_NAME}" value="{INPUT_VALUE}" />
+			<!-- ELSEIF TYPE == 'checkbox' -->
+			<input type="checkbox" id="{INPUT_NAME}" name="{INPUT_NAME}"{CHECKED} value="1" />
+			<!-- ELSE -->
+			<input type="{TYPE}" id="{INPUT_NAME}" name="{INPUT_NAME}" value="{INPUT_VALUE}" />
+			<!-- ENDIF -->
+		</dd>
+	</dl>
+</fieldset>
+
+<script{SCRIPT_TYPE}>
+{CDATA_BEGIN}
+<!-- IF TYPE == 'calendar' -->
+$('{INPUT_NAME}').calendar();
+<!-- ENDIF -->
+_._focus('{INPUT_NAME}');
+{CDATA_END}
+</script>

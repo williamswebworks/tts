@@ -1,0 +1,51 @@
+<!-- INCLUDE page.head.htm -->
+
+<div class="mainframe_pad">
+	<div id="ticket_group" class="sub_label w5">{V_GROUP_NAME}</div>
+	<h3>{V_TITLE}</h3>
+	
+	<div class="m_top_tiny m_btm_tiny _hr float-holder ie-widthfix">
+		<div class="m_top_tiny sub_label2"><strong>{L_AUTHOR}:</strong> <a href="{V_AUTHOR_URL}">{V_AUTHOR_NAME}</a></div>
+		
+		<div class="sub_label2"><strong>{L_TICKET_START}:</strong> {V_START}</div>
+		<!-- IF V_END -->
+		<div class="sub_label2"><strong>{L_TICKET_END}:</strong> {V_END}</div>
+		<!-- ENDIF -->
+		
+		<div class="sub_label2"><strong>{L_TICKET_ASSIGNED_TO}</strong> 
+		<!-- BEGIN assigned -->
+			<!-- BEGIN row -->
+			<span>{row.V_FULLNAME}</span>
+			<!-- END row -->
+		<!-- END assigned --></div>
+	</div>
+	
+	<div class="m_top_mid _text">
+		<p><strong>{L_TICKET_TEXT}</strong></p>
+		{V_TEXT}
+	</div>
+	
+	<!-- BEGIN notes -->
+	<div class="m_top_mid m_btm_big">
+		<h4>{L_TICKET_SOLUTION}</h4>
+		
+		<!-- BEGIN row -->
+		<div id="note_{row.V_NOTE_ID}" class="<!-- IF row.S_ROW_MOD -->struct_2 <!-- ENDIF -->m_top_mid">
+			<div><a class="relevant" href="{row.V_USERLINK}">{row.V_USERNAME}</a> ({row.V_TIME})</div>
+			<div class="m_top_mid">{row.V_TEXT}</div>
+		</div>
+		<!-- END row -->
+	</div>
+	<!-- END notes -->
+	
+	<div class="m_top_mid">
+		<strong>{L_TICKET_SIGNATURE}</strong>
+		<div class="signature">&nbsp;</div>
+	</div>
+</div>
+
+<script>
+$(_.print);
+</script>
+
+<!-- INCLUDE page.footer.htm -->

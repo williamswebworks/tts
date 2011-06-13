@@ -1,0 +1,52 @@
+<!-- INCLUDE page.header.htm -->
+
+<div id="mainframe" class="ie-widthfix float-holder">
+
+<!-- BEGIN no_tickets -->
+<!-- ERROR {L_CONTACTS_NO_RESULT} -->
+<!-- END no_tickets -->
+
+<form action="{U_FILTER}" method="post">
+Usuario asignado: <input type="text" name="username" value="{V_USERNAME}" /><br />
+Fecha inicial (dia-mes-a&ntilde;o): <input type="text" name="start" value="{V_NOW}" /><br />
+<input type="submit" name="submit" value="Buscar" />
+</form>
+
+<!-- BEGIN tickets -->
+<br />
+<table width="100%" border="1" celpadding="5" style="border-collapse:collapse">
+<tr align="center" bgcolor="#FFDF80">
+	<td><strong>Solicitante</strong></td>
+	<td><strong>Asignados</strong></td>
+	<td><strong>Categor&iacute;a</strong></td>
+	<td><strong>Fecha/hora</strong></td>
+	<td><strong>T&iacute;tulo</strong></td>
+	<td><strong>Texto</strong></td>
+	<td><strong>Estado</strong></td>
+</tr>
+<!-- BEGIN row -->
+<tr>
+	<td>{row.SOLICITANTE}</td>
+	<td>{row.ASIGNADOS}</td>
+	<td>{row.CATEGORIA}</td>
+	<td>{row.FECHAHORA}</td>
+	<td>{row.TITULO}</td>
+	<td>{row.TEXTO}</td>
+	<td>{row.ESTADO}</td>
+</tr>
+<!-- BEGIN notes -->
+<tr>
+	<td>&nbsp;</td>
+	<td>{notes.AUTOR}</td>
+	<td>&nbsp</td>
+	<td>{notes.FECHAHORA}</td>
+	<td colspan="3">{notes.TEXTO}</td>
+</tr>
+<!-- END notes -->
+<!-- END row -->
+</table>
+<!-- END tickets -->
+
+</div>
+
+<!-- INCLUDE page.footer.htm -->

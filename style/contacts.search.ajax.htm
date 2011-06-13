@@ -1,0 +1,228 @@
+<div class="field_add">
+<!-- IF TAG == 'general' -->
+<!-- IF $A[contact_add_field] -->
+<input type="button" class="button" id="bf_add" value="{L__COMPUTER_FIELD_ADD}" />
+<!-- ENDIF -->
+<!-- IF $A[contact_add_value] -->
+<input type="button" class="button" id="bv_add" value="{L__COMPUTER_VALUE_ADD}" />
+<!-- ENDIF -->
+<!-- IF $A[contact_modify_row_field] -->
+<input type="button" class="button" id="bv_edit" value="{L__COMPUTER_VALUE_EDIT}" style="display: none;" />
+<!-- ENDIF -->
+<!-- IF $A[contact_add_field] -->
+<form id="f_add" action="{U_CONTACTS_X1:MFIELD_X2:CREATE}" method="post" class="formset" onsubmit="return _.form.submit(this, ul.f_add);" style="display:none;">
+	<fieldset class="none">
+		<dl>
+			<dt>{L_CONTACT_FIELDS_NAME_SHOW}</dt>
+			<dd><input type="text" id="display" name="display" size="60" maxlength="60" value="" /></dd>
+		</dl>
+		<dl>
+			<dt>{L_F_ALIAS}</dt>
+			<dd><input type="text" id="alias" name="alias" size="60" maxlength="60" value="" /></dd>
+		</dl>
+		<dl>
+			<dt>{L_F_TYPE}</dt>
+			<dd><select name="type" id="type"><!-- BEGIN field_type --><option value="{field_type.VALUE}">{field_type.NAME}</option><!-- END field_type --></select></dd>
+		</dl>
+		<dl>
+			<dt>{L_F_REQUIRED}</dt>
+			<dd>{.CHECK:required:0}</dd>
+		</dl>
+		<dl>
+			<dt>{L_F_UNIQUE}</dt>
+			<dd>{.CHECK:unique:0}</dd>
+		</dl>
+		<dl>
+			<dt>{L_F_VISIBLE}</dt>
+			<dd>{.CHECK:show:1}</dd>
+		</dl>
+		
+		<div class="m_top_mid a_center">
+			<input type="submit" class="form_submit" name="submit" value="{L__SEND}" />
+			<input type="button" id="fx_add" class="form_cancel" name="cancel" value="{L__CANCEL}" />
+		</div>
+	</fieldset>
+</form>
+<!-- ENDIF -->
+<!-- IF $A[contact_add_value] -->
+<form id="v_add" action="{U_CONTACTS_X1:VALUE_X2:CREATE}" method="post" class="formset" onsubmit="return _.form.submit(this, ul.f_add);" style="display:none;">
+	<fieldset class="none">
+		<dl>
+			<dt>{L_F_TYPE}</dt>
+			<dd><select name="field_id" id="field_id"><!-- BEGIN field_available --><option value="{field_available.OPTION_ID}">{field_available.OPTION_NAME}</option><!-- END field_available --></select></dd>
+		</dl>
+		<dl>
+			<dt>{L_FORMS_VALUE}</dt>
+			<dd id="v_add_input">...</dd>
+		</dl>
+		
+		<div class="m_top_mid a_center">
+			<input type="hidden" name="uid" value="{V_CONTACT}" />
+			<input type="submit" class="form_submit" name="submit" value="{L__SEND}" />
+			<input type="button" id="vx_add" class="form_cancel" name="cancel" value="{L__CANCEL}" />
+		</div>
+	</fieldset>
+</form>
+<!-- ENDIF -->
+<!-- IF $A[contact_modify_row_field] -->
+<form id="v_edit" action="{U_CONTACTS_X1:VALUE_X2:MODIFY}" method="post" class="formset" onsubmit="return _.form.submit(this, ul.modify_c);" style="display:none;">
+	<div id="v_update"></div>
+	<div class="a_center m_top_mid">
+		<input type="hidden" name="uid" value="{V_CONTACT}" />
+		<input type="submit" class="form_submit" name="submit" value="{L__SEND}" />
+		<input type="button" id="vx_edit" class="form_cancel" name="cancel" value="{L__CANCEL}" />
+	</div>
+</form>
+<!-- ENDIF -->
+
+<ul id="contacts" class="grid">
+<!-- BEGIN field -->
+<li id="row_{V_CONTACT}_{field.ROW}_{field.ALIAS}"<!-- IF field.S_ROW_MOD --> class="row1"<!-- ENDIF -->><!-- IF field.CAN_DELETE && $A[contact_remove_row_field] --><img id="remove_{field.ROW}" src="{S_VISUAL}field_delete.png" alt="" title="{L_REMOVE}" /><!-- ENDIF --><!-- IF $A[contact_modify_row_field] --> <img id="modify_{field.ROW}" src="{S_VISUAL}field_edit.png" alt="" title="{L_EDIT}" /> <!-- ENDIF --><strong>{field.DISPLAY}</strong>: {field.VALUE}</li>
+<!-- END field -->
+</ul>
+
+<script>
+_.config.store({
+	<!-- IF $A[contact_add_value] -->
+	value_create_query: 'contacts',
+	u_av_query: '{U_CONTACTS_X1:VALUE_X2:CREATE_X3:QUERY}',
+	<!-- ENDIF -->
+	<!-- IF $A[contact_modify_row_field] -->
+	u_edit: '{U_CONTACTS_X1:VALUE_X2:CALL}',
+	<!-- ENDIF -->
+	<!-- IF $A[contact_remove_row_field] -->
+	u_delete: '{U_CONTACTS_X1:VALUE_X2:REMOVE}',
+	g_remove_confirm: '{L_F_DELETE_VALUE}',
+	<!-- ENDIF -->
+	v_uid: '{V_CONTACT}'
+});
+
+<!-- IF $A[contact_add_field] -->
+$('bf_add')._click(ul.watch_f);
+<!-- ENDIF -->
+<!-- IF $A[contact_add_value] -->
+$('bv_add')._click(ul.watch_f);
+<!-- ENDIF -->
+<!-- IF $A[contact_modify_row_field] -->
+$('bv_edit').hide();
+<!-- ENDIF -->
+<!-- IF $A[computer_update_ul_pc] -->
+ul.watch('contacts');
+<!-- ENDIF -->
+</script>
+<!-- ELSEIF TAG == 'computer' -->
+{L_LOADING}
+<script>
+_.go('{V_URL}');
+</script>
+<!-- ELSEIF TAG == 'auth' -->
+<!-- IF $A[contacts_update_auth] -->
+<input type="button" class="ticket_status_{DO_FOUNDER_CLASS}" id="do_founder" value="{L_SYSTEM_ADMIN}" />
+<!-- ENDIF -->
+
+<!-- BEGIN auth -->
+<div<!-- IF $A[contacts_update_auth] --> class="m_top_mid"<!-- ENDIF -->>
+	<input type="button" class="button" id="bf_add" value="{L__COMPUTER_FIELD_ADD}" />
+</div>
+
+<form id="f_add" action="{U_CONTACTS_X1:AUTH_X2:FIELD}" method="post" class="formset" onsubmit="return _.form.submit(this, ul.f_add);" style="display:none;">
+	<fieldset class="none">
+		<dl>
+			<dt>{L_CONTACT_FIELDS_NAME_SHOW}</dt>
+			<dd><input type="text" id="name" name="name" size="60" maxlength="60" value="" /></dd>
+		</dl>
+		<dl>
+			<dt>{L_F_ALIAS}</dt>
+			<dd><input type="text" id="alias" name="alias" size="60" maxlength="60" value="" /></dd>
+		</dl>
+		<dl>
+			<dt>{L_F_GLOBAL}</dt>
+			<dd>{.CHECK:required:0}</dd>
+		</dl>
+		
+		<div class="m_top_mid a_center">
+			<input type="submit" class="form_submit" name="submit" value="{L__SEND}" />
+			<input type="button" id="fx_add" class="form_cancel" name="cancel" value="{L__CANCEL}" />
+		</div>
+	</fieldset>
+</form>
+
+<div class="float-holder ie-widthfix">
+<ul id="auth" class="grid">
+<!-- BEGIN row -->
+<li id="li_{V_UID}_{row.FIELD}" class="float_left wi1 m_rgt_tiny ticket_status_{row.CLASS}"><!-- IF $A[contacts_update_auth] --><img src="{S_VISUAL}field_edit.png" alt="" /> <!-- ENDIF -->{row.NAME}</li>
+<!-- END row -->
+</ul>
+</div>
+<!-- END auth -->
+
+<script{SCRIPT_TYPE}>
+{CDATA_BEGIN}
+<!-- IF $A[contacts_update_auth] -->
+_.config.store('u_do_founder', '{U_DO_FOUNDER}');
+<!-- ENDIF -->
+<!-- BEGIN auth -->
+_.config.store('u_auth_modify', '{U_CONTACTS_X1:AUTH_X2:VALUE}');
+$('bf_add')._click(ul.watch_f);
+
+<!-- IF $A[contacts_update_auth] -->
+contacts.auth.observe('auth');
+<!-- ENDIF -->
+<!-- END auth -->
+<!-- IF $A[contacts_update_auth] -->
+contacts.auth.do_founder();
+<!-- ENDIF -->
+{CDATA_END}
+</script>
+<!-- ELSEIF TAG == 'groups' -->
+<!-- IF $A[contacts_group_add] -->
+<!-- BEGIN groups -->
+<input type="button" class="button" id="bq_add" value="{L_CONTACTS_GROUP_ADD}" />
+
+<form id="q_add" action="{U_CONTACTS_X1:GROUP_X2:CREATE}" method="post" class="formset" onsubmit="return _.form.submit(this, ul.f_add);" style="display:none;">
+	<fieldset class="none">
+		<dl>
+			<dt>{L_GROUP}</dt>
+			<dd><select name="group" id="group"><!-- BEGIN row --><option value="{row.VALUE}">{row.NAME}</option><!-- END row --></select></dd>
+		</dl>
+		
+		<div class="m_top_mid a_center">
+			<input type="hidden" name="uid" value="{V_UID}" />
+			<input type="submit" class="form_submit" name="submit" value="{L__SEND}" />
+			<input type="button" id="qx_add" class="form_cancel" name="cancel" value="{L__CANCEL}" />
+		</div>
+	</fieldset>
+</form>
+<!-- END groups -->
+<!-- ENDIF -->
+
+<ul id="{TAG}" class="grid">
+<!-- BEGIN group -->
+<li id="li_{V_UID}_{group.ID}"<!-- IF group.S_ROW_MOD --> class="row1"<!-- ENDIF -->><!-- IF $A[contact_remove_group] --><img id="remove_{group.ID}" src="{S_VISUAL}field_delete.png" alt="" title="{L_REMOVE}" /> <!-- ENDIF -->{group.NAME}</li>
+<!-- END group -->
+</ul>
+
+<script{SCRIPT_TYPE}>
+{CDATA_BEGIN}
+<!-- IF $A[contact_remove_group] -->
+_.config.store({
+	u_lidelete: '{U_CONTACTS_X1:GROUP_X2:REMOVE}',
+	g_remove_confirm: '{L_F_DELETE_VALUE}'
+});
+<!-- ENDIF -->
+
+<!-- BEGIN groups -->
+<!-- IF $A[contacts_groups_create] -->
+$('bq_add')._click(ul.watch_f);
+<!-- ENDIF -->
+<!-- END groups -->
+
+<!-- IF $A[contacts_groups_update] -->
+ul.watch('{TAG}');
+<!-- ENDIF -->
+{CDATA_END}
+</script>
+<!-- ENDIF -->
+</div>
+
+<!-- INCLUDE read_functions.htm -->
