@@ -2403,9 +2403,23 @@ function _xfs($mod = false, $wdir = false, $warg = false)
 		
 		if (!$found_mod)
 		{
-			_fatal();
+			if ($mod != 'home')
+			{
+				_fatal();
+			}
+			
+			class __home extends xmd
+			{
+				public function home()
+				{
+					return true;
+				}
+			}
 		}
-		require_once($mod_path);
+		else
+		{
+			require_once($mod_path);
+		}
 		
 		$mod_class = '__' . $mod;
 		if (!class_exists($mod_class))
