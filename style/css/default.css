@@ -687,7 +687,6 @@ input.submit { border: 1px solid #CCC; background: #EEE; }
 .li_pack {
 	background: transparent !important;
 	border-left: 1px solid #DB7070;
-	/*border-top: 2px solid #990000;*/
 }
 
 .form_create_field {
@@ -973,7 +972,7 @@ input.submit { border: 1px solid #CCC; background: #EEE; }
 	padding: 5px;
 	margin: 0;
 }
-/*.elements li:hover, */.elements li.fixed {
+.elements li.fixed {
 	background: #C6D5D7;
 }
 .elements li ul {
@@ -1038,22 +1037,12 @@ input.submit { border: 1px solid #CCC; background: #EEE; }
 	border: 1px solid #CCB3B3;
 }
 
-/* TEMPLATE: groups */
 .group_cell {
 	padding: 1px 5px 1px 5px;
 	border-radius: 5px;
 }
 .group_all {
 	background: #CDC5B7;
-}
-.group_soporte {
-	background: #B7CDBA;
-}
-.group_mantenimiento {
-	background: #B7CACD;
-}
-.group_ges {
-	background: #CDBAB7;
 }
 
 .etc_list {
