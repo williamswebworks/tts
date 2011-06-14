@@ -185,6 +185,24 @@ function _pre($a, $d = false)
 	}
 }
 
+function enable_rewrite()
+{
+	global $core;
+	
+	if (!$rewrite = $core->cache_load('rewrite_enabled'))
+	{
+		ob_start();
+		phpinfo(INFO_MODULES);
+		$contents = ob_get_contents();
+		ob_end_clean();
+		
+		$rewrite = strpos($contents, 'mod_rewrite') !== false;
+		$core->cache_store('rewrite_enabled', $rewrite);
+	}
+	
+	return $rewrite;
+}
+
 function _fatal($code = 404, $errfile = '', $errline = '', $errmsg = '', $errno = 0)
 {
 	sql_close();
@@ -2368,6 +2386,11 @@ function _layout($template, $page_title = false, $v_custom = false)
 function _xfs($mod = false, $wdir = false, $warg = false)
 {
 	global $user, $core;
+	
+	if (!$rewrite = enable_rewrite())
+	{
+		_fatal(499, '', '', 'Enable mod_rewrite on Apache.');
+	}
 	
 	require_once(XFS . 'core/modules.php');
 	

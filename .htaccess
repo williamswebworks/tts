@@ -1,3 +1,4 @@
+<IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteCond %{QUERY_STRING} base64_encode.*\(.*\) [OR]
 RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
@@ -11,6 +12,7 @@ RewriteRule ^(sign)(in|out|up)/?$ index.php?module=$1&args=x1:$2 [nc]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([a-z]+)/?(([0-9a-z\_\.\-\:]+)/?)?$ index.php?module=$1&args=$3 [L,QSA]
+</IfModule>
 
 <IfModule mod_expires.c>
 ExpiresActive On
