@@ -1,0 +1,35 @@
+<input type="hidden" name="field" value="{FIELD}" />
+
+<fieldset class="none">
+	<dl>
+		<dt>{DISPLAY}</dt>
+		<dd>
+			<!-- IF TYPE == 'select' -->
+			<!-- BEGIN select -->
+			<select name="{NAME}" id="__{NAME}_{COMPUTER}">
+			<!-- BEGIN item -->
+			<option value="{item.OPTION_ID}"{item.SELECTED}>{item.OPTION_NAME}</option>
+			<!-- END item -->
+			</select>
+			<!-- END select -->
+			<!-- ELSEIF TYPE == 'textarea' -->
+			<textarea id="__{NAME}_{COMPUTER}" name="{NAME}" rows="5" cols="25">{VALUE}</textarea>
+			<!-- ELSEIF TYPE == 'calendar' -->
+			<input type="text" id="__{NAME}_{COMPUTER}" name="{NAME}" value="{VALUE}" />
+			<!-- ELSEIF TYPE == 'checkbox' -->
+			<input type="checkbox" id="__{NAME}_{COMPUTER}" name="{NAME}"{CHECKED} value="1" />
+			<!-- ELSE -->
+			<input type="{TYPE}" id="__{NAME}_{COMPUTER}" name="{NAME}" value="{VALUE}" />
+			<!-- ENDIF -->
+		</dd>
+	</dl>
+</fieldset>
+
+<script{SCRIPT_TYPE}>
+{CDATA_BEGIN}
+<!-- IF TYPE == 'calendar' -->
+$('__{NAME}_{COMPUTER}').calendar();
+<!-- ENDIF -->
+_._focus('__{NAME}_{COMPUTER}');
+{CDATA_END}
+</script>

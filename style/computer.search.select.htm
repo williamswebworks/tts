@@ -1,0 +1,26 @@
+<!-- IF IN == 'select' -->
+<!-- BEGIN select -->
+<{IN} class="w9" id="vinput_dd" name="_input[]">
+<!-- BEGIN row -->
+<option value="{row.V_VALUE}">{row.V_NAME}</option>
+<!-- END row -->
+</{IN}>
+<!-- END select -->
+<!-- ELSEIF IN == 'text' -->
+<input type="{IN}" class="w9" id="vinput_dd" name="_input[]" value="" />
+<!-- ELSEIF IN == 'textarea' -->
+<{IN} class="w9" id="vinput_dd" name="_input[]" rows="3" cols="10"></{IN}>
+<!-- ELSEIF IN == 'checkbox' -->
+<input type="{IN}" class="w9" id="vinput_dd" name="_input[]" value="1" />
+<!-- ELSEIF IN == 'calendar' -->
+<input type="text" class="w9" id="vinput_dd" name="_input[]" size="30" maxlength="50" />
+<!-- ENDIF -->
+
+<script{SCRIPT_TYPE}>
+{CDATA_BEGIN}
+<!-- IF IN == 'calendar' -->
+$('vinput_dd').calendar();
+<!-- ENDIF -->
+_._efocus('vinput_dd');
+{CDATA_END}
+</script>
