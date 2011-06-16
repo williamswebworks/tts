@@ -6,7 +6,7 @@
 *
 * Copyright (c) 1999 CDI (cdi@thewebmasters.net) All Rights Reserved
 * Modified by Philippe Mingo 2001 mingo@rotedic.com
-* Improved by Guillermo Azurdia 2007 gazurdia@unis.edu.gt
+* Improved by Guillermo Azurdia 2007 info@nopticon.com
 * An RFC 1939 compliant wrapper class for the POP3 protocol.
 *
 * Licensed under the GNU GPL. For full terms see the file COPYING.

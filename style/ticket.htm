@@ -358,6 +358,18 @@
 			<dd><input type="text" id="ticket_username" name="ticket_username" size="41" value="" /></dd>
 		</dl>
 		<!-- ENDIF -->
+		<!-- BEGIN cat -->
+		<dl>
+			<dt id="cat_legend">{L_NAME_CATEGORY}</dt>
+			<dd>
+				<select>
+				<!-- BEGIN row -->
+				<option value="{row.CAT_ID}">{row.CAT_NAME}</option>
+				<!-- END row -->
+				</select>
+			</dd>
+		</dl>
+		<!-- END cat -->
 		<dl>
 			<dt id="title_legend">{L_FORMS_TICKET_TITLE}</dt>
 			<dd><input type="text" id="ticket_title" name="ticket_title" class="required" size="60" maxlength="60" value="" /></dd>
@@ -365,6 +377,23 @@
 		<dl>
 			<dt id="text_legend">{L_FORMS_TICKET_TEXT}</dt>
 			<dd><textarea id="ticket_text" name="ticket_text" class="required" cols="10" rows="10"></textarea></dd>
+		</dl>
+		<dl>
+			<dt id="file_legend">{L_TICKET_FILE_TITLE}</dt>
+			<dd>
+				
+				<p>
+					<input id="files-upload" type="file" multiple>
+				</p>
+				<p id="drop-area">
+					<span class="drop-instructions">or drag and drop files here</span>
+					<span class="drop-over">Drop files here!</span>
+				</p>
+				<ul id="file-list">
+					<li class="no-items">(no files uploaded yet)</li>
+				</ul>
+				
+			</dd>
 		</dl>
 		
 		<!-- BEGIN groups -->
@@ -382,7 +411,7 @@
 	
 	<script{SCRIPT_TYPE}>
 	{CDATA_BEGIN}
-	_.config.store({g_procesing_custom: '{L_TICKET_SENDING}'});
+	//_.config.store({g_procesing_custom: '{L_TICKET_SENDING}'});
 	$(ticket.create.startup);
 	
 	<!-- BEGIN groups -->

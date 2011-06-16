@@ -161,8 +161,16 @@ class __ext extends xmd
 			case 'js':
 				$content_type = 'application/x-javascript';
 				
-				require_once(XFS . 'core/jsmin.php');
-				$ext = JSMin::minify($ext);
+				if (($exit_code = strpos($ext, '[[EXIT]]')) !== false)
+				{
+					$ext = substr($ext, 0, $exit_code);
+				}
+				
+				try {
+					require_once(XFS . 'core/jsmin.php');
+					$ext = JSMin::minify($ext);
+				} catch (Exception $e) { }
+				
 				break;
 		}
 		

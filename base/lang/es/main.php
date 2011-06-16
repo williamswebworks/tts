@@ -228,6 +228,9 @@ $lang = array(
 	'TICKET_STATUS_CLOSED' => 'Completado',
 	'TICKET_STATUS_PENDING' => 'Pendiente',
 	
+	// 'TICKET_FILE_' => '',
+	'TICKET_FILE_TITLE' => 'Adjuntar archivos',
+	
 	'PAGES_ON' => 'P&aacute;gina <strong>%d</strong> de <strong>%d</strong>',
 	'PAGES_PREV' => 'P&aacute;gina anterior',
 	'PAGES_NEXT' => 'P&aacute;gina siguiente',

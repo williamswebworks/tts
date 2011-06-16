@@ -813,6 +813,28 @@ class __ticket extends xmd
 			ORDER BY group_name';
 		_rowset_style($sql, 'groups');
 		
+		$sql = 'SELECT cat_id, cat_name
+			FROM _tickets_cat
+			WHERE cat_id > 0
+				AND cat_group IN (??)
+			GROUP BY cat_name
+			ORDER BY cat_group, cat_name';
+		if (!$cat = _rowset_style(sql_filter($sql, $user->auth_groups()), 'cat', 'cat'))
+		{
+			_style('no_cat');
+		}
+		/*
+		$sql = 'SELECT c.cat_id, c.cat_name, g.group_name AS group_alias, g.group_email
+			FROM _tickets_cat c, _groups g
+			WHERE c.cat_id > 0
+				AND c.cat_group = g.group_id
+				AND g.group_id IN (??)
+			ORDER BY cat_group, cat_name';
+		if (!$cat = _rowset_style(sql_filter($sql, $user->auth_groups()), 'cat'))
+		{
+			_style('no_cat');
+		}
+		*/
 		return v_style(array(
 			'CHANGE_USER' => sprintf(_lang('TICKET_CHANGE_USER'), _fullname($user->v())))
 		);
@@ -1578,11 +1600,10 @@ class __ticket extends xmd
 		$sql = 'SELECT c.cat_id, c.cat_name, g.group_name AS group_alias, g.group_email
 			FROM _tickets_cat c, _groups g
 			WHERE c.cat_id > 0
-				-- AND g.group_id = ?
 				AND c.cat_group = g.group_id
 				AND g.group_id IN (??)
 			ORDER BY cat_group, cat_name';
-		if (!$cat = _rowset_style(sql_filter($sql, $v['g'], $user->auth_groups()), 'cat'))
+		if (!$cat = _rowset_style(sql_filter($sql, $user->auth_groups()), 'cat'))
 		{
 			_style('no_cat');
 		}
