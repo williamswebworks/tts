@@ -288,16 +288,16 @@ var _ = {
 		
 		return;
 	},
-	observe: function(d, e) {
-		$(d)._click(function() { _.clear(e) });
+	observe: function(e) {
+		$(this)._click(function() { _.clear(e) });
 		return;
 	},
-	display: function(el) {
-		return Element.getStyle(el, 'display');
+	display: function(e) {
+		return $(e).css('display');
 	},
-	shown: function(el) {
-		if ($(el)) {
-			return (_.display(el) != 'none');
+	shown: function() {
+		if ($(this)) {
+			return (_.display(this) != 'none');
 		}
 		return false;
 	},
@@ -321,8 +321,8 @@ var _ = {
 		el.innerHTML = s;
 		return el.value;
 	},
-	li: function(li) {
-		return Element.findChildren($(li), false, false, 'li');
+	li: function() {
+		return $(this).children('li');
 	},
 	_efocus: function(a) {
 		_.v(a, '');
