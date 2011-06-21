@@ -823,18 +823,7 @@ class __ticket extends xmd
 		{
 			_style('no_cat');
 		}
-		/*
-		$sql = 'SELECT c.cat_id, c.cat_name, g.group_name AS group_alias, g.group_email
-			FROM _tickets_cat c, _groups g
-			WHERE c.cat_id > 0
-				AND c.cat_group = g.group_id
-				AND g.group_id IN (??)
-			ORDER BY cat_group, cat_name';
-		if (!$cat = _rowset_style(sql_filter($sql, $user->auth_groups()), 'cat'))
-		{
-			_style('no_cat');
-		}
-		*/
+		
 		return v_style(array(
 			'CHANGE_USER' => sprintf(_lang('TICKET_CHANGE_USER'), _fullname($user->v())))
 		);

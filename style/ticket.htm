@@ -411,16 +411,15 @@
 	
 	<script{SCRIPT_TYPE}>
 	{CDATA_BEGIN}
-	//_.config.store({g_procesing_custom: '{L_TICKET_SENDING}'});
 	$(ticket.create.startup);
 	
 	<!-- BEGIN groups -->
 	<!-- BEGIN row -->
-	$('group_{row.ID}')._click(ticket.create.submit);
+	$('#group_{row.ID}').click(ticket.create.submit);
 	<!-- END row -->
 	<!-- END groups -->
 	<!-- IF $A[ticket_create_admin] -->
-	$('a_username')._click(ticket.create.username);
+	$('#a_username').click(ticket.create.username);
 	$(ticket.create.username_f);
 	<!-- ENDIF -->
 	{CDATA_END}
@@ -529,7 +528,7 @@
 		g_remove_confirm: '{L_F_DELETE_VALUE}'
 	});
 	
-	$('bc_add')._click(ul.watch_f);
+	$('bc_add').click(ul.watch_f);
 	ticket.cat.filter();
 	
 	<!-- IF $A[ticket_cat_update] -->

@@ -62,7 +62,7 @@ $.fn.extend({
 				$(i.id).unclick(function() { f(i) });
 			});
 			
-			$(i.id)._click(function() { f(i) });
+			$(i.id).click(function() { f(i) });
 		});
 		
 		return this;
@@ -74,6 +74,27 @@ $.fn.extend({
 		return this;
 	}
 });
+
+var skip = {
+	list: [],
+	
+	get: function() {
+		return skip.list;
+	},
+	add: function(str) {
+		$w(str).each(function(i) {
+			skip.list.push(i);
+		});
+	},
+	rm: function(str) {
+		$w(str).each(function(i) {
+			skip.list = skip.list.without(i);
+		});
+	},
+	clear: function() {
+		skip.list.clear();
+	}
+};
 
 var _ = {
 	aconfig: [],
@@ -89,27 +110,29 @@ var _ = {
 			function() { return a.length; }
 		) || 0;
 	},
+	pn: function(e) {
+		return e.parentNode;
+	},
 	e: function(e) {
 		return Try.these(
-			function() { return $(e.target); },
+			//function() { return $(e.target); },
 			function() { return $(e); }
 		) || e;
 	},
-	parent: function(e, rid) {
-		e = _.e(e).parentNode;
+	parent: function(e, r) {
+		e = _.pn(e);
+		
 		while (e.id == '') {
-			e = e.parentNode;
+			e = _.pn(e);
 		};
-		if (rid) {
-			return e.id;
-		};
-		return e;
+		
+		return (r) ? e.id : e;
 	},
 	ga: function(el, k) {
-		return $(el).readAttribute(k);
+		return $(el).attr(k);
 	},
 	sa: function(el, k, v) {
-		return $(el).writeAttribute(k, v);
+		return $(el).attr(k, v);
 	},
 	empty: function(e) {
 		return (Object.isUndefined(e) || e == '' || !e);
@@ -170,19 +193,22 @@ var _ = {
 		}
 		return _.trim(s);
 	},
-	call: function(url, callback, arg, show_wait) {
-		if (!url) return false;
+	call: function(addr, callback, arg, show_wait) {
+		if (!addr) return false;
 		
 		if (!Object.isObject(arg)) {
 			arg = {};
 		}
 		arg.ghost = 1;
 		
-		var opt = {
-			method: 'post',
-			asynchronous: true,
-			postBody: Object.toQueryString(arg),
-			onCreate: function() {
+		var ret = $.ajax({
+			url: addr,
+			type: "POST",
+			data: arg,
+			dataType: "text",//html json xml 
+			async:true,
+			
+			beforeSend: function(t) {
 				_.call_lapsed();
 				
 				if (show_wait) {
@@ -190,7 +216,18 @@ var _ = {
 				}
 				return false;
 			},
-			onSuccess: function(t) {
+			error: function(t) {
+				_.call_lapsed_stop();
+				
+				response = t.statusText;
+				if (response == 'Not Found') {
+					response = _.config.read('g_not_found');
+				}
+				
+				return _.error.show(response);
+			},
+			dataFilter: function(t) {},
+			success: function(t) {
 				_.call_lapsed_stop();
 				
 				if (show_wait) {
@@ -199,19 +236,11 @@ var _ = {
 				
 				return callback(t);
 			},
-			onFailure: function(t) {
-				_.call_lapsed_stop();
-				
-				response = t.statusText;
-				if (response == 'Not Found')
-				{
-					response = _.config.read('g_not_found');
-				}
-				
-				return _.error.show(response);
-			}
-		};
-		new Ajax.Request(url, opt);
+			complete: function() {}
+		});
+		
+		alert(addr + '-' + ret);
+		
 		return false;
 	},
 	call_lapsed: function() {
@@ -232,13 +261,13 @@ var _ = {
 	call_notify: function() {
 		g_proc_legend = _.config.read('g_procesing_custom') || _.config.read('g_procesing');
 		if (g_proc_legend) {
-			$('notifybar_legend').update(g_proc_legend);
-			$('notifybar').show();
+			$('#notifybar_legend').update(g_proc_legend);
+			$('#notifybar').show();
 		}
 		return false;
 	},
 	call_notify_close: function() {
-		$('notifybar').hide();
+		$('#notifybar').hide();
 		return false;
 	},
 	fp: function(a, b) {
@@ -289,7 +318,7 @@ var _ = {
 		return;
 	},
 	observe: function(e) {
-		$(this)._click(function() { _.clear(e) });
+		$(this).click(function() { _.clear(e) });
 		return;
 	},
 	display: function(e) {
@@ -321,8 +350,8 @@ var _ = {
 		el.innerHTML = s;
 		return el.value;
 	},
-	li: function() {
-		return $(this).children('li');
+	li: function(a) {
+		return $(a).children('li');
 	},
 	_efocus: function(a) {
 		_.v(a, '');
@@ -332,11 +361,8 @@ var _ = {
 	focus: function(el, sf) {
 		if (!sf) sf = [];
 		
-		it = 'text password textarea';
 		first = false;
-		Form.getElements(el).each(function(i) {
-			if (!_.input.type(i, it)) return;
-			
+		$(el).filter(':input(:text,:password)').each(function(i) {
 			_skp = false;
 			for (var j = 0, end = _.len(sf); j < end; j++) {
 				if (sf[j] == i.id && !_skp) _skp = true;
@@ -346,15 +372,15 @@ var _ = {
 			
 			if (_.empty($F(i.id)) && !first) {
 				first = true;
-				_._focus(i.id);
+				$(i.id).focus();
 			}
 		});
+		
 		return false;
 	},
 	form: {
 		numbers: function(e) {
-			var key;
-			var keyr;
+			var key, keyr;
 			
 			key = Try.these(
 				function() { return window.event.keyCode; },
@@ -364,10 +390,12 @@ var _ = {
 				return key;
 			}
 			
+			k = $.ui.keyCode;
 			keyr = String.fromCharCode(key);
-			all_key = [0, Event.KEY_BACKSPACE, Event.KEY_TAB, Event.KEY_RETURN, Event.KEY_ESC];
+			allkey = [0, k.BACKSPACE, k.TAB, k.ENTER, k.ESCAPE];
+			//all_key = [0, Event.KEY_BACKSPACE, Event.KEY_TAB, Event.KEY_RETURN, Event.KEY_ESC];
 			
-			if ((key == null) || _.inArray(key, all_key) || (keyr == '.' && !_.h($F(Event.element(e)), '.')) || (("0123456789").indexOf(keyr) > -1)) {
+			if ((key == null) || _.inArray(key, allkey) || (keyr == '.' && !_.h($F(Event.element(e)), '.')) || (("0123456789").indexOf(keyr) > -1)) {
 				return true;
 			}
 			
@@ -433,11 +461,15 @@ var _ = {
 			return $(f).select('.required');
 		},
 		tab: function(f) {
-			$(f).getInputs().each(function(i) {
+			$(f).filter(':input:not(:hidden)').each(function(i) {
+				i._keypress(_.form.tab_key);
+			});
+			
+			/*$(f).getInputs().each(function(i) {
 				if (!_.input.type(i, 'hidden textarea')) {
 					i._keypress(_.form.tab_key);
 				}
-			});
+			});*/
 			return;
 		},
 		tab_key: function(e) {
@@ -641,7 +673,7 @@ var _ = {
 		},
 		option: function(a) {
 			$$('.' + a).each(function(i) {
-				$(i)._click(_.input.option_callback);
+				$(i).click(_.input.option_callback);
 			});
 		},
 		option_callback: function(e) {
@@ -736,7 +768,7 @@ var _ = {
 		observe: function(el) {
 			a = $$('#' + el + ' li');
 			a.each(function(i) {
-				$(i.id)._click(_.tab.click);
+				$(i.id).click(_.tab.click);
 				_.add(_.tab.ary, _.replacement(i.id, 'row_', ''));
 				
 				if (_.len(a) == 1) _.tab.click(i.id);
@@ -761,7 +793,7 @@ var _ = {
 				$(el).insert_after('<li id="' + el.id + '_s">' + ff + '</li>');
 				
 				$w(_.config.read('xtab_tags')).each(function(tab) {
-					$('tab_' + tab + '_' + tab_id)._click(_.tab.z);
+					$('tab_' + tab + '_' + tab_id).click(_.tab.z);
 				});
 				
 				_.tab.z('tab_general_' + tab_id);
@@ -823,9 +855,9 @@ var ticket = {
 			f = 'ticket_create';
 			_.form.tab(f);
 			
-			$(f)._submit(Event.stop).reset();
+			//$(f)._submit(Event.stop).reset();
 			
-			return _.focus(f, skip.get());
+			//return _.focus(f, skip.get());
 		},
 		username: function() {
 			Element.toggle('d_username');
@@ -937,7 +969,7 @@ var ticket = {
 		watch: function() {
 			return Try.these(function() {
 				$$('#ticket_tech li').each(function(i) {
-					$('a_remove' + _.replacement(i.id, 'ar', ''))._click(ticket.tech.remove);
+					$('a_remove' + _.replacement(i.id, 'ar', '')).click(ticket.tech.remove);
 				});
 			});
 		},
@@ -969,7 +1001,7 @@ var ticket = {
 				if (_.empty(i.id) && !Object.isUndefined(i.id)) return;
 				
 				aid = 'a_rm_' + _.replacement(i.id, 'aid_', '');
-				$(aid)._click(ticket.tech.remove);
+				$(aid).click(ticket.tech.remove);
 			});
 			
 			return;
@@ -1003,10 +1035,10 @@ var ticket = {
 		},
 		go: function(e) {
 			a = _.e(e);
-			el = a.parentNode;
+			el = _.pn(a);
 			if (el.id == 'tickets') el = a;
 			
-			if (_.empty(el.id)) el = el.parentNode;
+			if (_.empty(el.id)) el = _.pn(el);
 			
 			_.go(_.replacement(_.config.read('u_go'), '*', _.replacement(el.id, '_', '')));
 			return;
@@ -1136,13 +1168,13 @@ var contacts = {
 		watch: function() {
 			_.li('_list').each(function(i) {
 				zv = _.ga(i, 'z');
-				try { $('m_modify_' + zv)._click(contacts.members.modify); } catch (h) { }
-				try { $('m_remove_' + zv)._click(contacts.members.remove); } catch (h) { }
+				try { $('m_modify_' + zv).click(contacts.members.modify); } catch (h) { }
+				try { $('m_remove_' + zv).click(contacts.members.remove); } catch (h) { }
 			});
 			return;
 		},
 		observe: function(i) {
-			$(i)._click(contacts.members.insert);
+			$(i).click(contacts.members.insert);
 		},
 		startup: function(e) {
 			$('contact_firstname').observe('keyup', contacts.members.nshow);
@@ -1236,7 +1268,7 @@ var contacts = {
 			return false;
 		},
 		do_founder: function() {
-			$('do_founder')._click(contacts.auth.do_founder_proc);
+			$('do_founder').click(contacts.auth.do_founder_proc);
 		},
 		do_founder_proc: function() {
 			return _.call(_.config.read('u_do_founder'), contacts.auth.do_founder_back);
@@ -1272,7 +1304,7 @@ var u = {
 			
 			_.li(a).each(function(i) {
 				if (is_liview) {
-					$(i.id)._click(u.liview);
+					$(i.id).click(u.liview);
 				}
 				
 				re = _.split(i.id, '_');
@@ -1280,16 +1312,16 @@ var u = {
 				_rj = re.join('_');
 				
 				if (_.config.read('a_' + b + '_modify')) {
-					Try.these(function() { $(_rj + '_modify')._click(u.modify); });
+					Try.these(function() { $(_rj + '_modify').click(u.modify); });
 				}
 				
 				if (_.config.read('a_' + b + '_remove')) {
-					Try.these(function() { $(_rj + '_remove')._click(u.remove); });
+					Try.these(function() { $(_rj + '_remove').click(u.remove); });
 				}
 				
 				switch (a) {
 					case 'contact':
-						Try.these(function() { $(_rj + '_' + b)._click(u.contact); });
+						Try.these(function() { $(_rj + '_' + b).click(u.contact); });
 						break;
 				}
 			});
@@ -1364,7 +1396,7 @@ var u = {
 				u.last_create = '';
 			}
 			
-			Try.these(function() { $(_name + '_create_cancel')._click(u.cancel); });
+			Try.these(function() { $(_name + '_create_cancel').click(u.cancel); });
 			$('button_' + _name + '_create').addClassName('button_s');
 			u.last_create = _name;
 			
@@ -1430,7 +1462,7 @@ var u = {
 	},
 	selectbox_init: function() {
 		_.li('_selectbox_in').each(function(i) {
-			$(i)._click(u.selectbox);
+			$(i).click(u.selectbox);
 		});
 		return;
 	},
@@ -1666,7 +1698,7 @@ var u = {
 			});
 		});
 		
-		Try.these(function() { $(_name + '_modify_cancel')._click(u.modify_cancel); });
+		Try.these(function() { $(_name + '_modify_cancel').click(u.modify_cancel); });
 		return;
 	},
 	modify_response: function(t) {
@@ -1775,25 +1807,18 @@ var ul = {
 	watch: function(a) {
 		return Try.these(function() {
 			switch (a) {
-				case 'category': pfx = 'g'; break;
-				case 'element': pfx = 'e'; break;
-				case 'brands': pfx = 'b'; break;
-				default: pfx = ''; break;
+				default: p = ''; break;
 			}
 			
-			_.li(a).each(function(i) {
+			_.li('#'+a).each(function(j, i) {
 				row = _.split(i.id, '_');
 				if (Object.isUndefined(row[2])) row[2] = row[1];
 				
-				if (_.inArray(a, $w('category components brands'))) {
-					$(i.id)._click(ul.liview);
-				}
-				
-				Try.these(function() { $(pfx + 'modify_' + row[2])._click(ul.modify); });
-				Try.these(function() { $(pfx + 'remove_' + row[2])._click(ul.remove); });
-				
+				Try.these(function() { $('#' + p + 'modify_' + row[2]).click(ul.modify); });
+				Try.these(function() { $('#' + p + 'remove_' + row[2]).click(ul.remove); });
+
 				if (a == 'contact') {
-					Try.these(function() { $(pfx + 'status_' + row[2])._click(ul.contact_status); });
+					Try.these(function() { $(p + 'status_' + row[2]).click(ul.contact_status); });
 				}
 			});
 		});
@@ -1822,7 +1847,7 @@ var ul = {
 				ul.last_create = '';
 			}
 			
-			Try.these(function() { $(_sa + 'x_add')._click(ul.watch_fx); });
+			Try.these(function() { $(_sa + 'x_add').click(ul.watch_fx); });
 			$('b' + _sa + '_add').addClassName('button_s');
 			ul.last_create = _sa;
 			
@@ -1909,26 +1934,21 @@ var ul = {
 		$('v_add_input').update(response);
 	},
 	
-	modify: function(e) {
-		el = _.e(e);
+	modify: function() {
+		el = _.e(this.id);
 		if (!Object.isUndefined(_.config.read('s_redirect')) && !_.empty(_.ga(el, 'redirect'))) {
 			return _.go(_.ga(el, 'redirect'));
 		}
 		
-		_v = _.parent(el);
+		_v = _.parent(this);
 		v = _.split(_v.id, '_');
 		p = _.parent(_v, true);
 		
 		switch (p) {
-			case 'components':
-			case 'category':
 			case 'cat':
 			case 'groups':
 			case 'element':
 				param = {el: _.encode(v[2])};
-				break;
-			case 'brands':
-				param = {el: _.encode(v[1])};
 				break;
 			case 'contacts':
 				param = {a: _.encode(v[1]), field: _.encode(v[2])};
@@ -2006,7 +2026,7 @@ var ul = {
 			Try.these(function() { $(i + '_add').hide(); $('b' + i + '_add').removeClassName('button_s'); });
 		});
 		
-		Try.these(function() { $(v_hide + 'x_edit')._click(ul.modify_x); });
+		Try.these(function() { $(v_hide + 'x_edit').click(ul.modify_x); });
 		return false;
 	},
 	modify_c: function(t) {

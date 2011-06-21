@@ -137,6 +137,11 @@ function $w(string) {
   return string ? string.split(/\s+/) : [];
 }
 
+function $F(v)
+{
+	return $(v).val();
+}
+
 function li_get_text(hoo) {
 	var A = [], next, T, pa, i;
 	if (!hoo) return A;
