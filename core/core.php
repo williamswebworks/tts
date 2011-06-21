@@ -259,7 +259,7 @@ function _fatal($code = 404, $errfile = '', $errline = '', $errmsg = '', $errno 
 				$errmsg = '';
 				if (!is_remote())
 				{
-					$errmsg = $sql_message;
+					$errmsg = '<br><br>' . $sql_message;
 				}
 				$sql_message = _utf8($sql_message);
 				
@@ -671,6 +671,22 @@ function array_empty($a)
 	}
 	
 	return !$response;
+}
+
+function array_least_key($a)
+{
+	$response = false;
+	
+	foreach ($a as $k => $v)
+	{
+		if (f($v))
+		{
+			$response = $k;
+			break;
+		}
+	}
+	
+	return $response;
 }
 
 function array_alias($arr, $alias, $map = false)
@@ -1181,6 +1197,11 @@ function _fullname($d)
 function _extension($file)
 {
 	return strtolower(str_replace('.', '', substr($file, strrpos($file, '.'))));
+}
+
+function is_post()
+{
+	return (request_method() == 'post');
 }
 
 function is_ghost()
@@ -1847,9 +1868,11 @@ function sql_filter()
 	$sql = array_shift($args);
 	$count_args = count($args);
 	
+	$sql = str_replace('%', '[!]', $sql);
+	
 	if (!$count_args || $count_args < 1)
 	{
-		return $sql;
+		return str_replace('[!]', '%', $sql);
 	}
 	
 	if ($count_args == 1 && is_array($args[0]))
@@ -1900,7 +1923,7 @@ function sql_filter()
 		$args[0] = implode($e_sql);
 	}
 	
-	return hook('sprintf', $args);
+	return str_replace('[!]', '%', hook('sprintf', $args));
 }
 
 function _sql($sql)
