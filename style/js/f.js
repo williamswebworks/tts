@@ -53,7 +53,7 @@ var Try = {
 
     return '{' + results.join(', ') + '}';
   }
-
+  
   function toQueryString(object) {
     return $H(object).toQueryString();
   }
@@ -134,12 +134,14 @@ var Try = {
 function $w(string) {
   if (!Object.isString(string)) return [];
   string = string.strip();
-  return string ? string.split(/\s+/) : [];
+  string = string ? string.split(/\s+/) : [];
+  return $(string);
 }
 
-function $F(v)
+function $F(e, v)
 {
-	return $(v).val();
+	if (v) $(e).val(v);
+	return $(e).val();
 }
 
 function li_get_text(hoo) {

@@ -1586,13 +1586,15 @@ class __ticket extends xmd
 			}
 		}
 		
+		$sql_filter = ($v['g']) ? sql_filter('= ??', $v['g']) : '> 0';
+		
 		$sql = 'SELECT c.cat_id, c.cat_name, g.group_name AS group_alias, g.group_email
 			FROM _tickets_cat c, _groups g
-			WHERE c.cat_id > 0
+			WHERE c.cat_group ??
 				AND c.cat_group = g.group_id
 				AND g.group_id IN (??)
 			ORDER BY cat_group, cat_name';
-		if (!$cat = _rowset_style(sql_filter($sql, $user->auth_groups()), 'cat'))
+		if (!_rowset_style(sql_filter($sql, $sql_filter, $user->auth_groups()), 'cat'))
 		{
 			_style('no_cat');
 		}

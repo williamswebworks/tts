@@ -46,53 +46,6 @@ class __ajax extends xmd
 		return true;
 	}
 	
-	protected function _create_create_brand()
-	{
-		$brand = $this->v('brand', '');
-		if (!f($brand))
-		{
-			$this->e();
-		}
-		
-		$sql = "SELECT brand_name
-			FROM _brands
-			WHERE brand_name LIKE '??%'";
-		$brands = _rowset(sql_filter($sql, $brand), false, 'brand_name');
-		return $this->_dom_ul($brands);
-	}
-	
-	protected function _create_create_brand_id()
-	{
-		$brand = $this->v('brand', '');
-		if (!f($brand))
-		{
-			$this->e();
-		}
-		
-		$sql = "SELECT brand_id, brand_name
-			FROM _brands
-			WHERE brand_name LIKE '??%'";
-		$brands = _rowset(sql_filter($sql, $brand), 'brand_id', 'brand_name');
-		return $this->_dom_ul_id($brands);
-	}
-	
-	protected function _create_create_model()
-	{
-		$this->_create_models_for_features();
-		
-		$model = $this->v('model', '');
-		if (!f($model))
-		{
-			$this->e();
-		}
-		
-		$sql = "SELECT model_name
-			FROM _models
-			WHERE model_name LIKE '??%'";
-		$models = _rowset(sql_filter($sql, $model), false, 'model_name');
-		return $this->_dom_ul($models);
-	}
-	
 	protected function _create_create_contact()
 	{
 		$v = $this->__(w('contact'));
@@ -108,82 +61,6 @@ class __ajax extends xmd
 			$contacts[$row['user_id']] = _fullname($row);
 		}
 		return $this->_dom_ul_id($contacts);
-	}
-	
-	protected function _create_create_domain()
-	{
-		$domain = $this->v('domain', '');
-		if (!f($domain))
-		{
-			$this->e();
-		}
-		
-		$sql = "SELECT *
-			FROM _pc_domains
-			WHERE dom_text LIKE '??%'";
-		$list = _rowset(sql_filter($sql, $domain), 'dom_id', 'dom_text');
-		return $this->_dom_ul_id($list);
-	}
-	
-	protected function _create_create_workgroup()
-	{
-		$workgroup = $this->v('workgroup', '');
-		if (!f($workgroup))
-		{
-			$this->e();
-		}
-		
-		$sql = "SELECT *
-			FROM _pc_workgroups
-			WHERE wg_text LIKE '??%'";
-		$list = _rowset(sql_filter($sql, $workgroup), 'wg_id', 'wg_text');
-		return $this->_dom_ul_id($list);
-	}
-	
-	protected function _create_list_prov()
-	{
-		$prov = $this->v('prov', '');
-		if (!f($prov))
-		{
-			$this->e();
-		}
-		
-		$sql = "SELECT prov_id, prov_name
-			FROM _prov
-			WHERE prov_name LIKE '??%'";
-		$list = _rowset(sql_filter($sql, $prov), 'prov_id', 'prov_name');
-		return $this->_dom_ul_id($list);
-	}
-	
-	protected function _create_list_tech()
-	{
-		$tech = $this->v('tech', '');
-		if (!f($tech))
-		{
-			$this->e();
-		}
-		
-		$sql = "SELECT pc_technology
-			FROM _pc
-			WHERE pc_technology LIKE '??%'";
-		$list = _rowset(sql_filter($sql, $tech), false, 'pc_technology');
-		return this->_dom_ul($list);
-	}
-	
-	protected function _create_models_for_features()
-	{
-		$v = $this->__(array('brand' => 0, 'model' => ''));
-		if (!f($v['brand']) || !f($v['model']))
-		{
-			$this->e();
-		}
-		
-		$sql = "SELECT model_name
-			FROM _models
-			WHERE model_brand = ?
-				AND model_name LIKE '??%'";
-		$list = _rowset(sql_filter($sql, $v['brand'], $v['model']), false, 'model_name');
-		return $this->_dom_ul($list);
 	}
 	
 	protected function _ticket_members()
