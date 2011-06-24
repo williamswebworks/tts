@@ -2001,29 +2001,29 @@ function _rowset($sql, $a = false, $b = false, $g = false, $rt = MYSQL_ASSOC)
 	return $arr;
 }
 
-function _rowset_style($sql, $style, $prefix = '')
+function _rowset_style($sql, $style, $prefix = '', $comp_orig = false, $comp_dest = false)
 {
 	$a = _rowset($sql);
-	_rowset_foreach($a, $style, $prefix);
+	_rowset_foreach($a, $style, $prefix, $comp_orig, $comp_dest);
 	
 	return $a;
 }
 
-function _rowset_foreach($rows, $style, $prefix = '')
+function _rowset_foreach($rows, $style, $prefix = '', $comp_orig = false, $comp_dest = false)
 {
 	$i = 0;
 	foreach ($rows as $row)
 	{
 		if (!$i) _style($style);
 		
-		_rowset_style_row($row, $style, $prefix);
+		_rowset_style_row($row, $style, $prefix, $comp_orig, $comp_dest);
 		$i++;
 	}
 	
 	return;
 }
 
-function _rowset_style_row($row, $style, $prefix = '')
+function _rowset_style_row($row, $style, $prefix = '', $comp_orig = false, $comp_dest = false)
 {
 	if (f($prefix)) $prefix .= '_';
 	
@@ -2032,6 +2032,11 @@ function _rowset_style_row($row, $style, $prefix = '')
 	{
 		$g = array_key(array_slice(explode('_', $_f), -1), 0);
 		$f[strtoupper($prefix . $g)] = $_v;
+	}
+	
+	if ($comp_orig !== false && isset($row[$comp_orig]))
+	{
+		$f['SELECTED'] = ($comp_dest  === $row[$comp_orig]);
 	}
 	
 	return _style($style . '.row', $f);

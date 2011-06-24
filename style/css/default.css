@@ -1044,6 +1044,12 @@ input.submit { border: 1px solid #CCC; background: #EEE; }
 .group_all {
 	background: #CDC5B7;
 }
+.group_g1 {
+	background: #E4E4B0;
+}
+.group_g2 {
+	background: #A9E2F3;
+}
 
 .etc_list {
 	margin-top: 10px;
