@@ -167,7 +167,7 @@ class __ajax extends xmd
 			FROM _pc
 			WHERE pc_technology LIKE '??%'";
 		$list = _rowset(sql_filter($sql, $tech), false, 'pc_technology');
-		return this->_dom_ul($list);
+		return $this->_dom_ul($list);
 	}
 	
 	protected function _create_models_for_features()
