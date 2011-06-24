@@ -46,53 +46,6 @@ class __ajax extends xmd
 		return true;
 	}
 	
-	protected function _create_create_brand()
-	{
-		$brand = $this->v('brand', '');
-		if (!f($brand))
-		{
-			$this->e();
-		}
-		
-		$sql = "SELECT brand_name
-			FROM _brands
-			WHERE brand_name LIKE '??%'";
-		$brands = _rowset(sql_filter($sql, $brand), false, 'brand_name');
-		return $this->_dom_ul($brands);
-	}
-	
-	protected function _create_create_brand_id()
-	{
-		$brand = $this->v('brand', '');
-		if (!f($brand))
-		{
-			$this->e();
-		}
-		
-		$sql = "SELECT brand_id, brand_name
-			FROM _brands
-			WHERE brand_name LIKE '??%'";
-		$brands = _rowset(sql_filter($sql, $brand), 'brand_id', 'brand_name');
-		return $this->_dom_ul_id($brands);
-	}
-	
-	protected function _create_create_model()
-	{
-		$this->_create_models_for_features();
-		
-		$model = $this->v('model', '');
-		if (!f($model))
-		{
-			$this->e();
-		}
-		
-		$sql = "SELECT model_name
-			FROM _models
-			WHERE model_name LIKE '??%'";
-		$models = _rowset(sql_filter($sql, $model), false, 'model_name');
-		return $this->_dom_ul($models);
-	}
-	
 	protected function _create_create_contact()
 	{
 		$v = $this->__(w('contact'));

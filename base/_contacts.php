@@ -87,13 +87,20 @@ class __contacts extends xmd
 	
 	protected function _all_home()
 	{
-		$sql = 'SELECT c.this_name, m.user_username, m.user_firstname, m.user_lastname, m.user_email
+		/*$sql = 'SELECT c.this_name, m.user_username, m.user_firstname, m.user_lastname, m.user_email
 			FROM _members m, _members_store s, _members_fields f, _members_ctype c
 			WHERE f.field_id = s.a_field
 				AND s.a_assoc = m.user_id
 				AND f.field_alias = ?
 				AND s.a_value = c.this_id
-			ORDER BY c.this_name, m.user_lastname, m.user_firstname';
+			ORDER BY c.this_name, m.user_lastname, m.user_firstname';*/
+		$sql = 'SELECT this_name, user_username, user_firstname, user_lastname, user_email
+			FROM _members
+			INNER JOIN _members_fields ON field_id = a_field
+				WHERE field_alias = ?
+			INNER JOIN _members_store ON a_assoc = user_id
+			INNER JOIN _members_ctype ON this_id = a_value
+			ORDER BY this_name, user_lastname, user_firstname';
 		$contacts = _rowset(sql_filter($sql, 'ctype'), 'this_name', false, true);
 		
 		$response = '';
@@ -670,11 +677,10 @@ class __contacts extends xmd
 		
 		$v = $this->__(array('eid' => 0, 'el' => 0));
 		
-		$sql = 'SELECT f.field_alias, s.a_assoc
-			FROM _members_store s, _members_fields f
-			WHERE s.a_assoc = ?
-				AND s.a_id = ?
-				AND s.a_field = f.field_id';
+		$sql = 'SELECT field_alias, a_assoc
+			FROM _members_store
+			INNER JOIN _members_fields ON field_id = a_field
+			WHERE a_assoc = ? AND a_id = ?';
 		if (!$store = _fieldrow(sql_filter($sql, $v['eid'], $v['el'])))
 		{
 			$this->_error('#TICKET_NOT_MEMBER');
@@ -683,12 +689,11 @@ class __contacts extends xmd
 		switch ($store['field_alias'])
 		{
 			case 'status':
-				$sql = 'SELECT f.field_alias, s.a_assoc, t.status_ext
-					FROM _members_store s, _members_fields f, _members_status t
-					WHERE s.a_assoc = ?
-						AND s.a_id = ?
-						AND s.a_field = f.field_id
-						AND s.a_value = t.status_id';
+				$sql = 'SELECT field_alias, a_assoc, status_ext
+					FROM _members_store
+					INNER JOIN _members_fields ON field_id = a_field
+					INNER JOIN _members_status ON status_id = a_value
+					WHERE a_assoc = ? AND a_id = ?';
 				if (!$sv = _fieldrow(sql_filter($sql, $v['eid'], $v['el'])))
 				{
 					$this->_error('#TICKET_NOT_MEMBER');
@@ -827,10 +832,10 @@ class __contacts extends xmd
 		$v = $this->__(array('table' => 0));
 		
 		$sql = 'SELECT *
-			FROM _search_tables t, _search_categories c
-			WHERE t.table_id = ?
-				AND t.table_cat = c.category_id
-				AND c.category_alias = ?';
+			FROM _search_tables
+			INNER JOIN _search_categories ON table_cat = category_id
+				WHERE category_alias = ?
+			WHERE table_id = ?';
 		if (!_fieldrow(sql_filter($sql, $v['table'], $this->m())))
 		{
 			$this->_error('#E_COMPUTER_NO_FIELD');
@@ -990,13 +995,13 @@ class __contacts extends xmd
 	{
 		global $user;
 		
-		$sql = 'SELECT c.*, f.*
-			FROM _members_store c, _members_fields f
-			WHERE c.a_assoc = ?
-				AND c.a_field = f.field_id
-				AND f.field_show = 1
-			ORDER BY f.field_display';
-		$fields = _rowset(sql_filter($sql, $v['uid']));
+		$sql = 'SELECT *
+			FROM _members_store
+			INNER JOIN _members_fields ON field_id = a_field
+				WHERE field_show = ?
+			WHERE a_assoc = ?
+			ORDER BY field_display';
+		$fields = _rowset(sql_filter($sql, 1, $v['uid']));
 		
 		$fields2 = array(
 			array(
@@ -1177,9 +1182,9 @@ class __contacts extends xmd
 		global $user;
 		
 		$sql = 'SELECT *
-			FROM _groups g, _groups_members gm
-			WHERE g.group_id = gm.member_group
-				AND gm.member_uid = ?';
+			FROM _groups
+			INNER JOIN _groups_members gm ON group_id = member_group
+				AND member_uid = ?';
 		$result = _rowset(sql_filter($sql, $v['uid']));
 		
 		foreach ($result as $row)
