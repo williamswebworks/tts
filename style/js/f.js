@@ -138,8 +138,7 @@ function $w(string) {
   return $(string);
 }
 
-function $F(e, v)
-{
+function $F(e, v) {
 	if (v) $(e).val(v);
 	return $(e).val();
 }
@@ -201,3 +200,7 @@ function filter_args(arr) {
 	}
 	return args;
 };
+
+function _input(a) {
+	return (a) ? ':not(' + a + ')' : '';
+}

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 13, 2011 at 12:37 PM
+-- Generation Time: Jun 27, 2011 at 01:34 PM
 -- Server version: 5.1.54
 -- PHP Version: 5.3.5-1ubuntu7.2
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `_uid`
+-- Database: `_tts`
 --
 
 -- --------------------------------------------------------
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `_config` (
 --
 
 INSERT INTO `_config` (`config_name`, `config_value`) VALUES
-('session_last_gc', '1307984732'),
+('session_last_gc', '1308923555'),
 ('default_lang', 'es'),
 ('address', 'http://localhost/sntc/tts/'),
 ('cookie_name', 'ucs'),
@@ -166,7 +166,7 @@ CREATE TABLE IF NOT EXISTS `_members` (
 
 INSERT INTO `_members` (`user_id`, `user_type`, `user_active`, `user_internal`, `user_mtype`, `user_login`, `user_username`, `user_password`, `user_lastvisit`, `user_auto_session`, `user_current_ip`, `user_lastpage`, `user_firstname`, `user_lastname`, `user_name_show`, `user_email`, `user_gender`, `user_date`, `user_dateformat`, `user_timezone`, `user_dst`, `user_login_tries`, `user_stats`) VALUES
 (1, 0, 0, 1, 0, '', 'nobody', 'nobody', 0, 0, '', '', 'nobody', 'nobody', '', '', 0, 0, 'd M Y H:i', -6, 0, 0, 1),
-(2, 3, 1, 0, 0, 'adm', 'adm', '8929b61a0e6b985943edc6d13c9992dc661e4f09', 1307980894, 0, '', 'http://localhost/sntc/tts/signin/', 'Administrador', '', '', '', 0, 0, 'd M Y H:i', -6, 0, 0, 0);
+(2, 3, 1, 0, 0, 'adm', 'adm', '8929b61a0e6b985943edc6d13c9992dc661e4f09', 1308854230, 0, '', 'http://localhost/sntc/tts/contacts/x1:groups/', 'Administrador', '', '', '', 0, 0, 'd M Y H:i', -6, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -478,7 +478,9 @@ INSERT INTO `_search_cache` (`cache_sid`, `cache_query`, `cache_uid`, `cache_tim
 ('3247b5dbce73a54b04a1439551ffb6dd', 'SELECT mb.user_id, mb.user_active, mb.user_firstname, mb.user_lastname\n					FROM _members mb\n					WHERE (mb.user_username LIKE ''adm'')\n					GROUP BY mb.user_id\n					ORDER BY mb.user_firstname, mb.user_lastname', 2, 1307976740),
 ('1f6285e331a4eda6651f65f73a6c369f', 'SELECT c.a_assoc, c.a_value, mb.user_firstname, mb.user_lastname\n			FROM _computer c, _computer_users cu, _members mb \n			WHERE c.a_assoc = cu.computer_id\n				AND cu.computer_uid = mb.user_id \n				AND mb.user_id = ''2''\n			GROUP BY c.a_assoc\n			ORDER BY mb.user_firstname, mb.user_lastname', 2, 1307977984),
 ('a50f92d030961cc7c9a6e3b7eab03d63', 'SELECT t.*, mb.user_id, mb.user_active, mb.user_firstname, mb.user_lastname\n				FROM _tickets t, _members mb\n				WHERE t.ticket_contact = mb.user_id\n					AND t.ticket_status = ''2''\n					AND t.ticket_group IN (1,2)\n					AND t.ticket_deleted = 0\n				ORDER BY t.ticket_start DESC', 2, 1307981021),
-('c075df0d922dc8e58f75853eda909edd', 'SELECT t.*, mb.user_id, mb.user_active, mb.user_firstname, mb.user_lastname\n				FROM _tickets t, _members mb\n				WHERE t.ticket_contact = mb.user_id\n					AND t.ticket_status = ''3''\n					AND t.ticket_group IN (1,2)\n					AND t.ticket_deleted = 0\n				ORDER BY t.ticket_start DESC', 2, 1307981026);
+('c075df0d922dc8e58f75853eda909edd', 'SELECT t.*, mb.user_id, mb.user_active, mb.user_firstname, mb.user_lastname\n				FROM _tickets t, _members mb\n				WHERE t.ticket_contact = mb.user_id\n					AND t.ticket_status = ''3''\n					AND t.ticket_group IN (1,2)\n					AND t.ticket_deleted = 0\n				ORDER BY t.ticket_start DESC', 2, 1307981026),
+('993bc776ba57b70def3288a9097d15b6', 'SELECT t.*, mb.user_id, mb.user_active, mb.user_firstname, mb.user_lastname\n				FROM _tickets t, _members mb\n				WHERE t.ticket_contact = mb.user_id\n					AND t.ticket_status = ''3''\n					AND t.ticket_group IN (1,2)\n					AND t.ticket_deleted = 0\n				ORDER BY t.ticket_start DESC', 2, 1308059713),
+('e5d1737307b4ad020bccaa7cb591ce4a', 'SELECT t.*, mb.user_id, mb.user_active, mb.user_firstname, mb.user_lastname\n				FROM _tickets t, _members mb\n				WHERE t.ticket_contact = mb.user_id\n					AND t.ticket_status = ''1''\n					AND t.ticket_group IN (1,2)\n					AND t.ticket_deleted = 0\n				ORDER BY t.ticket_start DESC', 2, 1308059716);
 
 -- --------------------------------------------------------
 
@@ -674,51 +676,8 @@ CREATE TABLE IF NOT EXISTS `_sessions` (
 --
 
 INSERT INTO `_sessions` (`session_id`, `session_user_id`, `session_last_visit`, `session_start`, `session_time`, `session_ip`, `session_browser`, `session_page`) VALUES
-('8ac5c08567689c85b08577c06ec588c9', 1, 1307985127, 1307985127, 1307985127, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', ''),
-('9e4b06a86a6088f91baf8a7f34138b1d', 1, 1307985145, 1307985145, 1307985145, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', 'http://localhost/sntc/tts/ticket/x1:view.a:2691/'),
-('4117849a0856aeb800ddd5128a9d3b50', 1, 1307984985, 1307984985, 1307984985, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', ''),
-('fef0f86652212ea46cf0a6ba5b5f3f0b', 1, 1307984732, 1307984732, 1307984732, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', ''),
-('752135eaae1ae27ed2220629328645cf', 1, 1307984735, 1307984735, 1307984735, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', 'http://localhost/sntc/tts/signin/'),
-('6bd1ac8267e5b4846a5becc82a7eaef1', 1, 1307984732, 1307984732, 1307984732, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', ''),
-('59b21dd6afe1b59113fb5367e08edd8f', 1, 1307983088, 1307983088, 1307983088, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', 'http://localhost/sntc/tts/ticket/x1:view.a:2691/'),
-('36a5f4a659ee3ef9c1c86437e8c73f69', 1, 1307982461, 1307982461, 1307982461, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', 'http://localhost/sntc/tts/ticket/x1:view.a:2686/'),
-('f02387eb2dd11aab91da515ebb007eff', 1, 1307982468, 1307982468, 1307982468, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', 'http://localhost/sntc/tts/signin/'),
-('8d07a3dcfb5f819c564cf5b0ec980f93', 1, 1307982461, 1307982461, 1307982461, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', ''),
-('d36dec805d5cad4d4daaf3b21874c654', 1, 1307982461, 1307982461, 1307982461, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', ''),
-('6523e7d92c0d55d6db0f7af5abbdbbfc', 1, 1307983088, 1307983088, 1307983088, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', ''),
-('06414ab396a93995d7e9874fea863b8f', 1, 1307982644, 1307982644, 1307982644, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', 'http://localhost/sntc/tts/signin/'),
-('eaffb53a742a6a1e8cb1b949ea57c1ec', 1, 1307982962, 1307982962, 1307982962, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', ''),
-('c5858525d378c167715786fb649490e5', 1, 1307982962, 1307982962, 1307982962, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', ''),
-('d895dedbf6c2e3d2880f826556958b8f', 1, 1307983281, 1307983281, 1307983281, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', 'http://localhost/sntc/tts/signin/'),
-('06d329d655d8e183fb4b9fdd7d7ed82a', 1, 1307983088, 1307983088, 1307983088, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', ''),
-('cb63663534755607621a1cb56a90647c', 1, 1307983101, 1307983101, 1307983101, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', 'http://localhost/sntc/tts/signin/'),
-('ebd8f77825d738d8aeba9680689df322', 1, 1307983114, 1307983114, 1307983114, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', ''),
-('aa2608db1897fc29d57d1f6bbe328e0d', 1, 1307983114, 1307983114, 1307983114, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', ''),
-('f3f4868ae79c0acbf087834ff1c5d1a3', 1, 1307983660, 1307983660, 1307983660, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', 'http://localhost/sntc/tts/ticket/x1:view.a:2691/'),
-('b57ff1b78fdb4c8378c7490cb9761c15', 1, 1307983617, 1307983617, 1307983617, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', ''),
-('00386ddbeee3f96a309887b0b4b9ba9f', 1, 1307983617, 1307983617, 1307983617, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', ''),
-('0a3f51f17f4f1e345ff2c72a33a4a15b', 1, 1307983910, 1307983910, 1307983910, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', 'http://localhost/sntc/tts/ticket/x1:view.a:2691/'),
-('a4af269be83d7b432f33c73f086ba8c7', 1, 1307983660, 1307983660, 1307983660, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', ''),
-('a2c1de659b671d7db4628afbfd006c74', 1, 1307983660, 1307983660, 1307983660, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', ''),
-('65e0528ee6fa7e3711e2531c7117561e', 1, 1307983662, 1307983662, 1307983662, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', 'http://localhost/sntc/tts/signin/'),
-('cb2c65bced033e5147090e526e0d80a6', 1, 1307984732, 1307984732, 1307984732, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', 'http://localhost/sntc/tts/ticket/x1:view.a:2691/'),
-('b45ece95dfe9abca9794703bd8844701', 1, 1307983766, 1307983766, 1307983766, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', ''),
-('da7d4e945574b9c33dd231c2815c6bac', 1, 1307983766, 1307983766, 1307983766, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', ''),
-('a2bac3009f2104e81a6213687be4aea4', 1, 1307983912, 1307983912, 1307983912, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', 'http://localhost/sntc/tts/signin/'),
-('35db8819adc6445ffbeaa47f458cfff3', 1, 1307983910, 1307983910, 1307983910, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', ''),
-('ba6c6b287615c441a341bc91285da3a6', 1, 1307983910, 1307983910, 1307983910, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', ''),
-('83a639ddd7ceef2fccc4c029e7904f81', 1, 1307984404, 1307984404, 1307984404, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', ''),
-('15888ca0baca310b85a0d00cfc8173b4', 1, 1307984404, 1307984404, 1307984404, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', ''),
-('942da9081ec978db0b7bb5fe79729185', 1, 1307985127, 1307985127, 1307985127, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', 'http://localhost/sntc/tts/ticket/x1:view.a:2691/'),
-('758f82133714ef2e428bba6daafa2589', 1, 1307984985, 1307984985, 1307984985, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', ''),
-('3515d9447a78101ec1c152eeeeac4438', 1, 1307985127, 1307985127, 1307985127, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', ''),
-('24c0bd36779d1be05f6667173cf29c0c', 1, 1307985128, 1307985128, 1307985128, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', 'http://localhost/sntc/tts/signin/'),
-('29e0cda7d62f462b06e7992715e19b2e', 1, 1307985137, 1307985137, 1307985137, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', ''),
-('0f820437c32dbf57079054d1ade4df8c', 2, 1307985139, 1307985146, 1307986639, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', 'http://localhost/sntc/tts/ticket/x1:create/'),
-('0f39439ef0470846ebcfec7a31ed7c94', 1, 1307985137, 1307985137, 1307985137, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', ''),
-('d4b77e4c588f688a18015bc18be08d99', 1, 1307985145, 1307985145, 1307985145, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', ''),
-('4813a617850e37d9896f05315af3c384', 1, 1307985146, 1307985146, 1307985146, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', 'http://localhost/sntc/tts/signin/'),
-('ddfb30fa72d85c90650533386bcbd1ff', 1, 1307985145, 1307985145, 1307985145, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.24 (KHTML, like Gecko) Ubuntu/11.04 Chromium/11.0.696.71 Chrome/11.0.696.71 Safari/534.24', '');
+('abb3c7239c18df2c910beb737b50f90e', 1, 1308923799, 1308923799, 1308923799, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686; rv:5.0) Gecko/20100101 Firefox/5.0', 'http://localhost/sntc/tts/signin/'),
+('8525710b4e7354e1365cfd1dca9c7bc5', 2, 1308923558, 1308923799, 1309198881, '127.0.0.1', 'Mozilla/5.0 (X11; Linux i686; rv:5.0) Gecko/20100101 Firefox/5.0', 'http://localhost/sntc/tts/ticket/x1:cat.g:0/');
 
 -- --------------------------------------------------------
 

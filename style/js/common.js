@@ -6,7 +6,64 @@ $(function() {
 	$('#e_notice').hide();
 });
 
+$.extend({
+	k: function(a) {
+		return $.ui.keyCode[a]; 
+	},
+	len: function(a) {
+		return $(a).length;
+	},
+	skip: {
+		list: [],
+		
+		get: function() {
+			return $.skip.list;
+		},
+		push: function(a) {
+			$w(a).each(function() { $.skip.list.push(this); });
+			
+			return this;
+		},
+		rm: function(a) {
+			$w(a).each(function(i, el) {
+				var item = -2;
+				$.each($.skip.list, function(i, v) {
+					if (v[0] == el) { item = i; }
+				});
+				
+				if (item > -2) $.skip.list.splice(item, 1);
+			});
+			
+			return this;
+		},
+		clear: function() {
+			$.skip.list = [];
+			
+			return this;
+		}
+	}
+});
+
 $.fn.extend({
+	clear: function() {
+		return this.each(function() {
+			var type = this.type, tag = this.tagName.toLowerCase();
+			if (tag == 'form') {
+				return $(':input', this).clear();
+			}
+			
+			if (type == 'text' || type == 'password' || tag == 'textarea') {
+				this.value = '';
+			} else if (type == 'checkbox' || type == 'radio') {
+				this.checked = false;
+			} else if (tag == 'select') {
+				this.selectedIndex = -1;
+			}
+		});
+	},
+	visible: function() {
+		return $(this).is(':visible');
+	},
 	scroll: function() {
 		$.scrollTo(this);
 		return this;
@@ -20,7 +77,7 @@ $.fn.extend({
 		return this;
 	},
 	calendar: function() {
-		Calender.setup({dateField: this});
+		Calendar.setup({dateField: this});
 		this.attr('readonly', true);
 		return this;
 	},
@@ -30,32 +87,6 @@ $.fn.extend({
 	},
 	selectindex_v: function(i) {
 		_.form._selectindesx(this, i);
-		return this;
-	},
-	option_sort: function() {
-		$A(this.options).sort(function(a, b) {
-			return (a.text.toLowerCase() < b.text.toLowerCase() ) ? -1 : 1;
-		}).each(function(i) {
-			this.options[i] = this;
-		});
-		
-		return this;
-	},
-	li_sort: function() {
-		a = li_get_text(this);
-		a.sort(function(a, b) {
-			a = a.data.toLowerCase().replace(/^ */g,'');
-			b = b.data.toLowerCase().replace(/^ */g,'');
-			if (a == b) return 0;
-			return a > b ? 1 : -1;
-		});
-		
-		while (a.length) {
-			c = a.pop();
-			while (c && c.nodeName != 'LI') c = c.parentNode;
-			if (c) this.insertBefore(c, this.firstChild);
-		};
-		
 		return this;
 	},
 	list_observe: function(f) {
@@ -79,27 +110,6 @@ $.fn.extend({
 	}
 });
 
-var skip = {
-	list: [],
-	
-	get: function() {
-		return skip.list;
-	},
-	add: function(str) {
-		$w(str).each(function() {
-			skip.list.push(this);
-		});
-	},
-	rm: function(str) {
-		$w(str).each(function() {
-			skip.list = skip.list.without(this);
-		});
-	},
-	clear: function() {
-		skip.list = [];
-	}
-};
-
 var _ = {
 	aconfig: [],
 	extend_skip: [],
@@ -109,19 +119,11 @@ var _ = {
 	timeout: function(cmd, s) {
 		return setTimeout(cmd, (s * 1000));
 	},
-	len: function(a) {
-		return Try.these(
-			function() { return a.length; }
-		) || 0;
-	},
 	pn: function(e) {
 		return e.parentNode;
 	},
 	e: function(e) {
-		return Try.these(
-			//function() { return $(e.target); },
-			function() { return $(e); }
-		) || e;
+		return $(e);
 	},
 	parent: function(e, r) {
 		e = _.pn(e);
@@ -158,7 +160,8 @@ var _ = {
 	},
 	inArray: function(needle, haystack, strict) {
 		var s = '==' + ((strict) ? '=' : '');
-		haystack.each(function() {
+		
+		$(haystack).each(function() {
 			eval('cmp = (needle ' + s + ' this) ? true : false;');
 			if (cmp) {
 				return true;
@@ -174,18 +177,6 @@ var _ = {
 			a = [];
 		}
 		return a;
-	},
-	extend: function(a, b) {
-		var c = {};
-		
-		for (row in a) {
-			if (!Object.isFunction(a[row]) || !Object.isUndefined(_.extend_skip[row])) c[row] = a[row];
-		}
-		for (row in b) {
-			if (!Object.isFunction(b[row]) || !Object.isUndefined(_.extend_skip[row])) c[row] = b[row];
-		}
-		
-		return c;
 	},
 	add: function(a, v) {
 		a.push(v);
@@ -323,15 +314,6 @@ var _ = {
 		$(this).click(function() { _.clear(e) });
 		return;
 	},
-	display: function(e) {
-		return $(e).css('display');
-	},
-	shown: function() {
-		if ($(this)) {
-			return (_.display(this) != 'none');
-		}
-		return false;
-	},
 	code: function(el) {
 		return $(el).innerHTML;
 	},
@@ -355,18 +337,13 @@ var _ = {
 	li: function(a) {
 		return $(a).children('li');
 	},
-	_efocus: function(a) {
-		_.v(a, '');
-		$(a).focus();
-		return false;
-	},
 	focus: function(el, sf) {
 		if (!sf) sf = [];
 		
 		first = false;
 		$(el).filter(':input(:text,:password)').each(function() {
 			_skp = false;
-			for (var j = 0, end = _.len(sf); j < end; j++) {
+			for (var j = 0, end = $(sf).len(); j < end; j++) {
 				if (sf[j] == this.id && !_skp) _skp = true;
 			}
 			
@@ -374,7 +351,7 @@ var _ = {
 			
 			if (_.empty($F(this.id)) && !first) {
 				first = true;
-				$(this.id).focus();
+				$(this).focus();
 			}
 		});
 		
@@ -392,68 +369,41 @@ var _ = {
 				return key;
 			}
 			
-			k = $.ui.keyCode;
 			keyr = String.fromCharCode(key);
-			allkey = [0, k.BACKSPACE, k.TAB, k.ENTER, k.ESCAPE];
-			//all_key = [0, Event.KEY_BACKSPACE, Event.KEY_TAB, Event.KEY_RETURN, Event.KEY_ESC];
+			allkey = [0, $.k('BACKSPACE'), $.k('TAB'), $.k('ENTER'), $.k('ESCAPE')];
 			
 			if ((key == null) || _.inArray(key, allkey) || (keyr == '.' && !_.h($F(Event.element(e)), '.')) || (("0123456789").indexOf(keyr) > -1)) {
 				return true;
 			}
 			
-			return Try.these(
-				function() { return Event.stop(e); },
-				function() { return e.returnValue = false; }
-			) || false;
+			return e.preventDefault();
 		},
 		submit: function(f, callback, a_args, show_wait) {
 			_f = $(f).attr('id');
 			
-			try {
-				//alert(this.isEmpty(f, ':hidden'));
-				err = false;
-				$(':input:not(:hidden)', f).each(function(i) {
-					//alert(this.name + " = " + i + ' = ' + $(this).val());
-					
-					if (!$(this).val() && !_.inArray(this.name, skip.get())) {
-						if (!err) $(this).focus();
-						
-						err = true;
-					}
-				});
-				
-				alert(!err);
-			} catch (e) {
-				alert(e);
-			}
+			if (!this.isEmpty(f, ':hidden')) return false;
 			
-			return false;
-			
-			
-			if (!this.isEmpty(f)) return false;
-			
-			_.form.checkbox(f);
+			_.form.checkbox(f, ':hidden');
 			
 			arg = {};
-			Form.getElements(f).each(function(j) {
-				if (_.empty(this.name)) return;
+			$(':input', f).each(function(j) {
+				if (!this.name) return;
 				
-				var arg_value = this.value;
+				var av = this.value;
 				if (_.input.type(this, 'checkbox') && !this.checked) {
-					arg_value = '';
+					av = '';
 				}
 				
 				if (_.h(this.name, '[')) {
 					this.name = _.replacement(this.name, '[]', '[' + j + ']');
-					arg[this.name] = _.encode(arg_value);	
-				} else {
-					arg[this.name] = _.encode(arg_value);
 				}
+				
+				arg[this.name] = _.encode(av);
+				
+				if (Object.isObject(a_args)) {
+					$.extend(arg, a_args);
+				};
 			});
-			
-			if (Object.isObject(a_args)) {
-				arg = _.extend(arg, a_args);
-			};
 			
 			return _.call(f.action, callback, arg, show_wait);
 		},
@@ -466,21 +416,21 @@ var _ = {
 				_.error.show(response);
 			}
 			
-			Form.getElements(f).each(function(j) {
+			$(':input', f).each(function(j) {
 				if (this.name && !_.input.type(this, 'submit')) {
 					if (!err) _.v(this, '');
 					
-					if (_.input.type(this, 'text') && !j) _._focus(this);
+					if (_.input.type(this, 'text') && !j) $(this).focus();
 				}
 			});
 			return false;
 		},
 		event: function(e) {
-			Event.stop(e);
+			$(e).preventDefault();
 			return _.form.find(e);
 		},
 		find: function(e) {
-			return Event.findElement(e, 'form');
+			return $(e).closest('form');
 		},
 		required: function(f) {
 			return $(f).select('.required');
@@ -492,14 +442,14 @@ var _ = {
 			return;
 		},
 		tab_key: function(e) {
-			if (e.keyCode != Event.KEY_RETURN) return;
+			if (e.keyCode != $.ui.keyCode.RETURN) return;
 			
 			f = _.form.find(e);
 			r = _.form.required(f);
 			e = _.e(e);
 			_focus = false;
 			
-			$(f).getElements().each(function() {
+			$(':input', f).each(function() {
 				if (_.input.type(this, 'hidden')) {
 					return;
 				}
@@ -508,7 +458,7 @@ var _ = {
 					fthis = this;
 					r.each(function(j) {
 						if (fthis.id == j.id) {
-							_._focus(fthis);
+							$(fthis).focus();
 							_focus = false;
 							throw $break;
 						}
@@ -542,7 +492,7 @@ var _ = {
 		isEmpty: function(f, st) {
 			err = false;
 			
-			$(':input' + ((st !== false) ? ':not(' + st + ')' : ''), f).each(function(i) {
+			$(':input' + _input(st), f).each(function(i) {
 				if (!$(this).val() && !_.inArray(this.name, skip.get())) {
 					if (!err) $(this).focus();
 					
@@ -554,7 +504,7 @@ var _ = {
 		},
 		first: function(el) {
 			a = false;
-			$(el).getInputs().each(function() {
+			$(':input', el).each(function() {
 				if (this.type == 'hidden' || this.disabled) {
 					return;
 				}
@@ -595,7 +545,7 @@ var _ = {
 			if (!n) n = 0;
 			
 			return Try.these(function() {
-				var a = Element.findChildren(_.e(e), false, false, 'option');
+				var a = $(_.e(e)).children('option');
 				if (a[n]) return [_.ga(a[n], 'value'), a[n].text];
 			}) || [0, ''];
 		},
@@ -631,21 +581,21 @@ var _ = {
 						return _.form.submit($(formname), _.config.read('f_' + el), {is: el});
 					});
 					
-					return _._focus(inputname);
+					return $(inputname).focus();
 				}
 				
 				$$('#' + formname).invoke('remove');
 				
 				if (_.config.read('n_' + el)) {
-					_._focus(_.config.read('n_' + el));
+					$(_.config.read('n_' + el)).focus();
 				};
 				return;
 			}
 		},
-		checkbox: function(f) {
+		checkbox: function(f, a) {
 			return Try.these(function() {
-				Form.getElements.each(function() {
-					if (_.empty(this.name)) return;
+				$('input' + _input(a), f).each(function(i) {
+					if (!this.name) return;
 					
 					if (_.input.type(this, 'checkbox') && !this.checked) {
 						this.checked = true;
@@ -687,7 +637,7 @@ var _ = {
 			if (!a) a = 'stext';
 			
 			if (_.empty($F(a))) {
-				return _._focus(a);
+				return $(a).focus();
 			}
 			return true;
 		},
@@ -724,9 +674,9 @@ var _ = {
 			}
 			
 			if (Object.isObject(k)) {
-				_.aconfig = _.extend(_.aconfig, k);
+				$.extend(_.aconfig, k);
 			} else {
-				eval('_.aconfig = _.extend(_.aconfig, {' + k + ': v})');
+				eval('$.extend(_.aconfig, {' + k + ': v})');
 			}
 			return;
 		},
@@ -886,13 +836,13 @@ var ticket = {
 		username_f: function() {
 			v_skp = 'ticket_username';
 			
-			if (_.display('d_username') != 'none') {
+			if ($('#d_username').visible()) {
 				skip.rm(v_skp);
 			} else {
 				skip.add(v_skp);
 				_.v(v_skp, '');
 			}
-			return _.focus('ticket_create', skip.get());
+			return _.focus('#ticket_create', skip.get());
 		},
 		submit: function(e) {
 			var f = _.form.find(e);
@@ -1002,10 +952,10 @@ var ticket = {
 		toggle: function() {
 			Element.toggle('ticket_tech_select');
 			
-			if (_.display('ticket_tech_select') != 'none') {
-				return _._focus('a_tech');
+			if ($('ticket_tech_select').visible()) {
+				return $('#a_tech').focus();
 			}
-			return _.v('a_tech', '');
+			return $('#a_tech').val('');
 		},
 		update: function(t) {
 			response = t.responseText;
@@ -1040,13 +990,13 @@ var ticket = {
 	list: {
 		watch: function() {
 			Try.these(function() {
-				$('view')._change(ticket.list.selectmode);
+				$('#view')._change(ticket.list.selectmode);
 			});
 			Try.these(function() {
-				$('tickets').list_observe(ticket.list.go);
+				$('#tickets').list_observe(ticket.list.go);
 			});
 			Try.these(function() {
-				$('status_list').list_observe(ticket.list.status);
+				$('#status_list').list_observe(ticket.list.status);
 			});
 			
 			return;
@@ -1131,8 +1081,8 @@ var ticket = {
 	note: {
 		toggle: function() {
 			Element.toggle('ticket_note_box');
-			if (_.display('note_text') != 'none') {
-				_._focus('note_text');
+			if ($('#note_text').visible()) {
+				$('#note_text').focus();
 			}
 			return false;
 		},
@@ -1163,7 +1113,7 @@ var ticket = {
 				return _.error.show(response);
 			}
 			if (response == EE.OK) {
-				Form.reset('form_add_note');
+				$('#form_add_note').clear();
 				return _.reload();
 			}
 			return false;
@@ -1195,11 +1145,11 @@ var contacts = {
 			$(i).click(contacts.members.insert);
 		},
 		startup: function(e) {
-			$('contact_firstname').observe('keyup', contacts.members.nshow);
-			$('contact_lastname').observe('keyup', contacts.members.nshow);
+			$('contact_firstname').keyup(contacts.members.nshow);
+			$('contact_lastname').keyup(contacts.members.nshow);
 			
 			$('#form_contact .button').each(contacts.members.observe);
-			_.focus('form_contact')
+			_.focus('form_contact');
 		},
 		nshow: function(e) {
 			_.v('contact_show', $F('contact_firstname') + ' ' + $F('contact_lastname'));
@@ -1347,7 +1297,7 @@ var u = {
 		_comp = _name + (!_.empty(_subtype) ? '_' + _subtype : '');
 		formname = '#form_' + _comp + '_create';
 		
-		if (_.display(formname) != 'none') {
+		if ($(formname).visible()) {
 			$(formname).hide();
 			
 			Try.these(function() {
@@ -1381,15 +1331,14 @@ var u = {
 		_name = _en.pop();
 		_subtype = '';
 		
-		if (_.len(_en) > 1) {
+		if ($(_en).len() > 1) {
 			_tmp = _en.pop();
 			//_subtype = _name;
 			_name = _tmp;
 		}
 		
 		Try.these(function() {
-			_in = _.form.find(e).getInputs('button');
-			_in.each(function() {
+			$(e).closest('form').filter(':button').each(function() {
 				if (this.id == _this) {
 					return;
 				}
@@ -1407,7 +1356,7 @@ var u = {
 		
 		u.cancel();
 		
-		if (_.display('#form_' + _name + '_create') != 'none') {
+		if ($('#form_' + _name + '_create').visible()) {
 			if (!_.empty(u.last_create) && ('form_' + u.last_create + '_create' != 'form_' + _name + '_create')) {
 				$('#form_' + u.last_create + '_create').hide();
 				Try.these(function() {
@@ -1434,14 +1383,13 @@ var u = {
 		_name = _en.pop();
 		_subtype = '';
 		
-		if (_.len(_en) > 1) {
+		if ($(_en).len() > 1) {
 			_tmp = _en.pop();
 			_subtype = _name;
 			_name = _tmp;
 		}
 		
-		_in = _.form.find(e).getInputs('button');
-		_in.each(function() {
+		$(e).closest('form').filter(':button').each(function() {
 			if (this.id == _this) {
 				return;
 			}
@@ -1711,9 +1659,9 @@ var u = {
 				break;
 		}
 		
-		$('form_' + _name + '_modify').show();
+		$('#form_' + _name + '_modify').show();
 		$.scrollTo('#form_' + name + '_modify');
-		$('button_' + _name + '_modify').addClass('button_s').show();
+		$('#button_' + _name + '_modify').addClass('button_s').show();
 		
 		$w('field value').each(function() {
 			Try.these(function() {
@@ -1797,7 +1745,7 @@ var u = {
 				$(_.glue(re, '_')).hide();
 		
 				Try.these(function() {
-					if (_.len(_.li('contact')) == 1) {
+					if ($(_.li('contact')).len() == 1) {
 						_.reload();
 					}
 					
@@ -1863,7 +1811,7 @@ var ul = {
 		}
 		
 		ul.watch_fx();
-		if (_.display('#' + _sa + '_add') != 'none') {
+		if ($('#' + _sa + '_add').visible()) {
 			if (!_.empty(ul.last_create) && ul.last_create + '_add' != _sa + '_add') {
 				$('#' + ul.last_create + '_add').hide();
 				Try.these(function() {
@@ -1882,10 +1830,10 @@ var ul = {
 		return;
 	},
 	watch_fx: function(e) {
-		if (_.display(_sa + '_add') != 'none') {
-			$(_sa + '_add').hide();
+		if ($('#' + _sa + '_add').visible()) {
+			$('#' + _sa + '_add').hide();
 			Try.these(function() {
-				$(_sa + 'x_add').unbind('click', ul.watch_fx);
+				$('#' + _sa + 'x_add').unbind('click', ul.watch_fx);
 			});
 			_.timeout(function() {
 				$('#b' + _sa + '_add').removeClass('button_s');
@@ -2141,7 +2089,7 @@ var ul = {
 			default:
 				if (response == EE.OK) {
 					Try.these(function() {
-						if (_.len(_.li('contact')) == 1)
+						if ($(_.li('contact')).len() == 1)
 						{
 							_.reload();
 						}
@@ -2179,7 +2127,7 @@ var ul = {
 		$('v_add').hide();
 		
 		Try.these(function() {
-			if (!$('contact') || !_.len(_.li('contact'))) {
+			if (!$('contact') || !$(_.li('contact')).len()) {
 				_.reload();
 			}
 		});
