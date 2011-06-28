@@ -312,32 +312,31 @@
 	<!-- ENDIF -->
 	
 	<!-- IF $A[ticket_print] -->
-	$('ticket_print')._click(ticket._print);
+	$('#ticket_print').click(ticket._print);
 	<!-- ENDIF -->
 	
 	<!-- IF $A[ticket_remove] && ! V_DELETED -->
-	$('ticket_remove')._click(ticket.remove);
+	$('#ticket_remove').click(ticket.remove);
 	<!-- ENDIF -->
 	
 	<!-- IF $A[ticket_assign_tech] || $A[ticket_auto_assign] -->
-	$('ticket_tech_click')._click(ticket.tech.toggle);
-	//ticket.tech.watch();
+	$('#ticket_tech_click').click(ticket.tech.toggle);
 	<!-- ENDIF -->
 	<!-- IF $A[ticket_update_cat] -->
 	_.config.store('u_update_cat', '{U_CATEGORY}');
-	$('ticket_cat')._click(ticket.cat.select);
-	$('cat_select')._change(ticket.cat.click);
+	$('#ticket_cat').click(ticket.cat.select);
+	$('#cat_select').change(ticket.cat.click);
 	<!-- ENDIF -->
 	<!-- IF $A[ticket_update_group] -->
 	_.config.store('u_update_group', '{U_GROUP}');
-	$('ticket_group')._click(ticket.groups.select);
-	$('ticket_group_select')._change(ticket.groups.click);
+	$('#ticket_group').click(ticket.groups.select);
+	$('#ticket_group_select').change(ticket.groups.click);
 	<!-- ENDIF -->
 	<!-- IF $A[ticket_update_status] -->
 	_.config.store('u_update_status', '{U_STATUS}');
-	ticket.status.change('btn_li');
+	ticket.status.change('#btn_li');
 	<!-- ENDIF -->
-	$('add_note')._click(ticket.note.toggle);
+	$('#add_note').click(ticket.note.toggle);
 	{CDATA_END}
 	</script>
 	
@@ -362,7 +361,7 @@
 		<dl>
 			<dt id="cat_legend">{L_NAME_CATEGORY}</dt>
 			<dd>
-				<select>
+				<select name="ticket_cat">
 				<!-- BEGIN row -->
 				<option value="{row.CAT_ID}">{row.CAT_NAME}</option>
 				<!-- END row -->
@@ -378,22 +377,13 @@
 			<dt id="text_legend">{L_FORMS_TICKET_TEXT}</dt>
 			<dd><textarea id="ticket_text" name="ticket_text" class="required" cols="10" rows="10"></textarea></dd>
 		</dl>
+		<!-- <dl>
+			<dt id="file_legend">{L_TICKET_FILE_TITLE}</dt>
+			<dd><input id="files-upload" name="files-upload" type="file" multiple></dd>
+		</dl> -->
 		<dl>
 			<dt id="file_legend">{L_TICKET_FILE_TITLE}</dt>
-			<dd>
-				
-				<p>
-					<input id="files-upload" type="file" multiple>
-				</p>
-				<p id="drop-area">
-					<span class="drop-instructions">or drag and drop files here</span>
-					<span class="drop-over">Drop files here!</span>
-				</p>
-				<ul id="file-list">
-					<li class="no-items">(no files uploaded yet)</li>
-				</ul>
-				
-			</dd>
+			<dd><div id="files"></div></dd>
 		</dl>
 		
 		<!-- BEGIN groups -->
@@ -528,7 +518,7 @@
 		g_remove_confirm: '{L_F_DELETE_VALUE}'
 	});
 	
-	$('bc_add').click(ul.watch_f);
+	$('#bc_add').click(ul.watch_f);
 	ticket.cat.filter();
 	
 	<!-- IF $A[ticket_cat_update] -->

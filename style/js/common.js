@@ -19,7 +19,7 @@ $.extend({
 		get: function() {
 			return $.skip.list;
 		},
-		push: function(a) {
+		add: function(a) {
 			$w(a).each(function() { $.skip.list.push(this); });
 			
 			return this;
@@ -64,6 +64,12 @@ $.fn.extend({
 	visible: function() {
 		return $(this).is(':visible');
 	},
+	_toggle: function(s) {
+		$(this).hide();
+		$(s).show();
+		
+		return this;
+	},
 	scroll: function() {
 		$.scrollTo(this);
 		return this;
@@ -92,6 +98,11 @@ $.fn.extend({
 	list_observe: function(f) {
 		$(this).click(function(e) {
 			var $t = $(e.target);
+			
+			if ($t.is('div')) {
+				$t = $t.closest('li');
+			}
+			
 			if ($t.is('li')) {
 				id = $t.attr('id');
 				if (!id) return;
@@ -123,7 +134,10 @@ var _ = {
 		return e.parentNode;
 	},
 	e: function(e) {
-		return $(e);
+		return Try.these(
+			function() { return e.target; },
+			function() { return $(e); }
+		) || e;
 	},
 	parent: function(e, r) {
 		e = _.pn(e);
@@ -254,7 +268,7 @@ var _ = {
 	call_notify: function() {
 		g_proc_legend = _.config.read('g_procesing_custom') || _.config.read('g_procesing');
 		if (g_proc_legend) {
-			$('#notifybar_legend').update(g_proc_legend);
+			$('#notifybar_legend').html(g_proc_legend);
 			$('#notifybar').show();
 		}
 		return false;
@@ -341,15 +355,15 @@ var _ = {
 		if (!sf) sf = [];
 		
 		first = false;
-		$(el).filter(':input(:text,:password)').each(function() {
+		$(':input(:text,:password)', el).each(function() {
 			_skp = false;
-			for (var j = 0, end = $(sf).len(); j < end; j++) {
+			for (var j = 0, end = $(sf).size(); j < end; j++) {
 				if (sf[j] == this.id && !_skp) _skp = true;
 			}
 			
 			if (_skp) return;
 			
-			if (_.empty($F(this.id)) && !first) {
+			if (!$(this).val() && !first) {
 				first = true;
 				$(this).focus();
 			}
@@ -372,7 +386,7 @@ var _ = {
 			keyr = String.fromCharCode(key);
 			allkey = [0, $.k('BACKSPACE'), $.k('TAB'), $.k('ENTER'), $.k('ESCAPE')];
 			
-			if ((key == null) || _.inArray(key, allkey) || (keyr == '.' && !_.h($F(Event.element(e)), '.')) || (("0123456789").indexOf(keyr) > -1)) {
+			if ((key == null) || _.inArray(key, allkey) || (keyr == '.' && !_.h($F(_.e(e)), '.')) || (("0123456789").indexOf(keyr) > -1)) {
 				return true;
 			}
 			
@@ -381,16 +395,16 @@ var _ = {
 		submit: function(f, callback, a_args, show_wait) {
 			_f = $(f).attr('id');
 			
-			if (!this.isEmpty(f, ':hidden')) return false;
+			if (!this.isEmpty(f, ':hidden,:file')) return false;
 			
-			_.form.checkbox(f, ':hidden');
+			_.form.checkbox(f, ':hidden,:file');
 			
 			arg = {};
 			$(':input', f).each(function(j) {
 				if (!this.name) return;
 				
 				var av = this.value;
-				if (_.input.type(this, 'checkbox') && !this.checked) {
+				if ($(this).is(':checkbox') && !this.checked) {
 					av = '';
 				}
 				
@@ -400,12 +414,12 @@ var _ = {
 				
 				arg[this.name] = _.encode(av);
 				
-				if (Object.isObject(a_args)) {
+				if ($.isPlainObject(a_args)) {
 					$.extend(arg, a_args);
 				};
 			});
 			
-			return _.call(f.action, callback, arg, show_wait);
+			return _.call($(f).attr('action'), callback, arg, show_wait);
 		},
 		complete: function(t) {
 			var response = t.responseText;
@@ -433,7 +447,7 @@ var _ = {
 			return $(e).closest('form');
 		},
 		required: function(f) {
-			return $(f).select('.required');
+			return $('.required', f);
 		},
 		tab: function(f) {
 			$(f).filter(':input:not(:hidden)').each(function() {
@@ -493,7 +507,7 @@ var _ = {
 			err = false;
 			
 			$(':input' + _input(st), f).each(function(i) {
-				if (!$(this).val() && !_.inArray(this.name, skip.get())) {
+				if (!$(this).val() && !_.inArray(this.name, $.skip.get())) {
 					if (!err) $(this).focus();
 					
 					err = true;
@@ -571,23 +585,23 @@ var _ = {
 				if (_.form.selectedindex(el) == 'option_' + el) {
 					formaction = _.config.read('ds_' + el) || _.config.read('global_dynamic_select');
 					
-					$(el).insert_after(Builder.node('form', {method: 'post', id: formname, action: formaction}, [
+					/*$(el).insert_after(Builder.node('form', {method: 'post', id: formname, action: formaction}, [
 						Builder.node('input', {type: 'text', class: 'in', size: 25, id: inputname, name: 'case'}),
 						Builder.node('input', {type: 'submit', class: 'bt', id: submitname, name: 'submit', value: 'Guardar'})
-					]));
+					]));*/
 					
 					$(formname).addClass('m_top_mid gform').submit(function(_e) {
-						Event.stop(_e);
+						e.preventDefault();
 						return _.form.submit($(formname), _.config.read('f_' + el), {is: el});
 					});
 					
 					return $(inputname).focus();
 				}
 				
-				$$('#' + formname).invoke('remove');
+				$('#' + formname).remove();
 				
-				if (_.config.read('n_' + el)) {
-					$(_.config.read('n_' + el)).focus();
+				if ('#' + _.config.read('n_' + el)) {
+					$('#' + _.config.read('n_' + el)).focus();
 				};
 				return;
 			}
@@ -634,9 +648,9 @@ var _ = {
 			return;
 		},
 		empty: function(a) {
-			if (!a) a = 'stext';
+			if (!a) a = '#stext';
 			
-			if (_.empty($F(a))) {
+			if (!$(a).val()) {
 				return $(a).focus();
 			}
 			return true;
@@ -763,7 +777,7 @@ var _ = {
 				$(el).insert_after('<li id="' + el.id + '_s">' + ff + '</li>');
 				
 				$w(_.config.read('xtab_tags')).each(function() {
-					$('tab_' + this + '_' + tab_id).click(_.tab.z);
+					$('#tab_' + this + '_' + tab_id).click(_.tab.z);
 				});
 				
 				_.tab.z('tab_general_' + tab_id);
@@ -797,7 +811,7 @@ var _ = {
 					break;
 			}
 			
-			$('tab_frame_' + tab_id).update(response);
+			$('#tab_frame_' + tab_id).html(response);
 			
 			switch (_scr) {
 				case 1:
@@ -825,62 +839,77 @@ var ticket = {
 			f = 'ticket_create';
 			_.form.tab(f);
 			
-			//$(f)._submit(Event.stop).reset();
+			$.skip.add('files-upload');
 			
-			//return _.focus(f, skip.get());
+			$("#files").fileUpload({
+				'uploader': 'SPATH/f/uploader.swf',
+				'cancelImg': 'SPATH/f/cancel.png',
+				'script': 'SPATH/f/upload.php',
+				'folder': 'files',
+				'multi': true,
+				'buttonText': 'Select Files',
+				'checkScript': 'SPATH/f/check.php',
+				'displayData': 'speed',
+				'simUploadLimit': 2
+			});
+			
+			return;
 		},
 		username: function() {
-			Element.toggle('d_username');
+			$('#d_username').toggle();
 			return ticket.create.username_f();
 		},
 		username_f: function() {
 			v_skp = 'ticket_username';
 			
 			if ($('#d_username').visible()) {
-				skip.rm(v_skp);
+				$.skip.rm(v_skp);
 			} else {
-				skip.add(v_skp);
+				$.skip.add(v_skp);
 				_.v(v_skp, '');
 			}
-			return _.focus('#ticket_create', skip.get());
+			return _.focus('#ticket_create', $.skip.get());
 		},
 		submit: function(e) {
+			var e = _.e(e);
 			var f = _.form.find(e);
-			var err = false;
+			var x = false;
 			
-			_.v('ticket_group', _.replacement(_.e(e).id, 'group_', ''))
+			$('#ticket_group').val(_.replacement(e.id, 'group_', ''));
 			
-			_.form.required(f).each(function() {
+			_.form.required(f).each(function(i) {
 				j = _.replacement(this.id, 'ticket_', '');
 				
-				if (_.empty($F(this))) {
+				if (!$(this).val()) {
 					$('#' + j + '_legend').addClass('notice');
-					err = true;
+					x = true;
 				} else {
 					$('#' + j + '_legend').removeClass('notice');
 				}
 			});
 			
-			if (err) {
-				return _.focus('ticket_create', skip.get());
-			}
+			if (x) return _.focus(f, $.skip.get());
 			
 			return _.form.submit(f, _.form.error_or_go, false, true);
+		},
+		submit_files: function() {
+			$('#files').fileUploadStart();
+			$('#files').fileUploadClearQueue();
 		}
 	},
 	cat: {
 		select: function() {
-			return _._toggle('ticket_cat', 'ticket_cat_div');
+			return $('#ticket_cat')._toggle('#ticket_cat_div');
 		},
 		hide: function() {
-			return _._toggle('ticket_cat_div', 'ticket_cat');
+			return $('#ticket_cat_div')._toggle('#ticket_cat');
 		},
 		callback: function(t) {
-			$('ticket_cat').update(t.responseText);
+			$('#ticket_cat').html(t.responseText);
 			return ticket.cat.hide();
 		},
 		click: function() {
-			return _.call(_.config.read('u_update_cat'), ticket.cat.callback, {cat: _.form.selectedindex('cat_select')});
+			return _.call(_.config.read('u_update_cat'), ticket.cat.callback, {cat: $('#cat_select').val()});
 		},
 		filter: function(e) {
 			$('#group_filter').list_observe(function(i) {
@@ -893,17 +922,17 @@ var ticket = {
 			return $(el).list_observe(ticket.status.click);
 		},
 		select: function() {
-			return _._toggle('ticket_status', 'ticket_status_div');
+			return $('#ticket_status')._toggle('#ticket_status_div');
 		},
 		hide: function() {
-			return _._toggle('ticket_status_div', 'ticket_status');
+			return $('#ticket_status_div')._toggle('#ticket_status');
 		},
 		callback: function(t) {
 			response = t.responseText;
 			if (_.error.has(response)) {
 				return _.error.show(response);
 			}
-			var ret = json_decode(response);
+			var ret = $.evalJSON(response);
 			
 			$('#status_' + ret.rm_id).removeClass('active');
 			$('#status_' + ret.add_id).addClass('active');
@@ -916,22 +945,22 @@ var ticket = {
 			return;
 		},
 		click: function(e) {
-			return _.call(_.config.read('u_update_status'), ticket.status.callback, {ticket: _.config.read('v_ticket'), status: _.replacement(_.e(e).id, 'status_', '')});
+			return _.call(_.config.read('u_update_status'), ticket.status.callback, {ticket: _.config.read('v_ticket'), status: _.replacement(_.e(e).attr('id'), 'status_', '')});
 		}
 	},
 	groups: {
 		select: function() {
-			return _._toggle('ticket_group', 'd_ticket_group');
+			return $('#ticket_group')._toggle('#d_ticket_group');
 		},
 		hide: function() {
-			return _._toggle('d_ticket_group', 'ticket_group');
+			return $('#d_ticket_group')._toggle('#ticket_group');
 		},
 		callback: function(t) {
-			$('ticket_group').update(t.responseText);
+			$('#ticket_group').html(t.responseText);
 			return ticket.groups.hide();
 		},
 		click: function() {
-			return _.call(_.config.read('u_update_group'), ticket.groups.callback, {group: _.form.selectedindex('ticket_group_select')});
+			return _.call(_.config.read('u_update_group'), ticket.groups.callback, {group: $('#ticket_group_select').val()});
 		}
 	},
 	tech: {
@@ -950,7 +979,7 @@ var ticket = {
 			return _.call(u, this.callback, {ticket: _.config.read('v_ticket')});
 		},
 		toggle: function() {
-			Element.toggle('ticket_tech_select');
+			$('#ticket_tech_select').toggle();
 			
 			if ($('ticket_tech_select').visible()) {
 				return $('#a_tech').focus();
@@ -990,7 +1019,7 @@ var ticket = {
 	list: {
 		watch: function() {
 			Try.these(function() {
-				$('#view')._change(ticket.list.selectmode);
+				$('#view').change(ticket.list.selectmode);
 			});
 			Try.these(function() {
 				$('#tickets').list_observe(ticket.list.go);
@@ -1003,16 +1032,16 @@ var ticket = {
 		},
 		go: function(e) {
 			a = _.e(e);
-			el = _.pn(a);
-			if (el.id == 'tickets') el = a;
+			el = a.parent();
 			
-			if (_.empty(el.id)) el = _.pn(el);
+			if (el.attr('id') == 'tickets') el = a;
 			
-			_.go(_.replacement(_.config.read('u_go'), '*', _.replacement(el.id, '_', '')));
-			return;
+			if (_.empty(el.attr('id'))) el = _.pn(el);
+			
+			return _.go(_.replacement(_.config.read('u_go'), '*', _.replacement(el.attr('id'), '_', '')));
 		},
-		status: function(e) {	
-			return _.call(_.config.read('u_status'), _.form.error_or_go, {s: _.replacement(_.e(e).id, 'status_', '')});
+		status: function(e) {
+			return _.call(_.config.read('u_status'), _.form.error_or_go, {s: _.replacement(_.e(e).attr('id'), 'status_', '')});
 		},
 		sync: {
 			call: function() {
@@ -1045,7 +1074,7 @@ var ticket = {
 			return;
 		},
 		set: function(t, v) {
-			$(ticket.group.groups).each(function() {
+			$('#' + ticket.group.groups).each(function() {
 				f = (v == this) ? 'addClass' : 'removeClass';
 				eval("$('#group_' + i)." + f + "('selected');");
 			});
@@ -1053,12 +1082,12 @@ var ticket = {
 		}
 	},
 	_print: function(e) {
-		Event.stop(e);
+		e.preventDefault();
 		
 		return window.open(_.ga(_.e(e), 'href'));
 	},
 	remove: function(e) {
-		Event.stop(e);
+		e.preventDefault();
 		
 		if (!_confirm(_.config.read('g_ticket_remove'))) {
 			return false;
@@ -1080,7 +1109,7 @@ var ticket = {
 	},
 	note: {
 		toggle: function() {
-			Element.toggle('ticket_note_box');
+			$('#ticket_note_box').toggle();
 			if ($('#note_text').visible()) {
 				$('#note_text').focus();
 			}
@@ -1101,7 +1130,7 @@ var ticket = {
 		remove: function(u) {
 			if (_confirm(_.config.read('l_remove_note'))) {
 				this.callback = function(t) {
-					$('noteid_' + t.responseText).remove();
+					$('#noteid_' + t.responseText).remove();
 				};
 				_.call(u, this.callback);
 			};
@@ -1145,8 +1174,8 @@ var contacts = {
 			$(i).click(contacts.members.insert);
 		},
 		startup: function(e) {
-			$('contact_firstname').keyup(contacts.members.nshow);
-			$('contact_lastname').keyup(contacts.members.nshow);
+			$('#contact_firstname').keyup(contacts.members.nshow);
+			$('#contact_lastname').keyup(contacts.members.nshow);
 			
 			$('#form_contact .button').each(contacts.members.observe);
 			_.focus('form_contact');
@@ -1173,8 +1202,8 @@ var contacts = {
 			return _.call(_.config.read('u_edit'), contacts.members.modify_call, {a: _.config.read('v_uid'), field: _.encode(id)});
 		},
 		modify_call: function(t) {
-			$('value_editing_update').update(t.responseText);
-			$('value_editing').show();
+			$('#value_editing_update').html(t.responseText);
+			$('#value_editing').show();
 			return;
 		},
 		modify_callback: function(t) {
@@ -1184,7 +1213,7 @@ var contacts = {
 			}
 			
 			if (response == EE.OK) {
-				$('#value_editing').hide;
+				$('#value_editing').hide();
 				_.timeout(_.tab.refresh, 0.5);
 			}
 			return false;
@@ -1236,7 +1265,7 @@ var contacts = {
 			return false;
 		},
 		do_founder: function() {
-			$('do_founder').click(contacts.auth.do_founder_proc);
+			$('#do_founder').click(contacts.auth.do_founder_proc);
 		},
 		do_founder_proc: function() {
 			return _.call(_.config.read('u_do_founder'), contacts.auth.do_founder_back);
@@ -1278,16 +1307,16 @@ var u = {
 				_rj = re.join('_');
 				
 				if (_.config.read('a_' + b + '_modify')) {
-					Try.these(function() { $(_rj + '_modify').click(u.modify); });
+					Try.these(function() { $('#' + _rj + '_modify').click(u.modify); });
 				}
 				
 				if (_.config.read('a_' + b + '_remove')) {
-					Try.these(function() { $(_rj + '_remove').click(u.remove); });
+					Try.these(function() { $('#' + _rj + '_remove').click(u.remove); });
 				}
 				
 				switch (a) {
 					case 'contact':
-						Try.these(function() { $(_rj + '_' + b).click(u.contact); });
+						Try.these(function() { $('#' + _rj + '_' + b).click(u.contact); });
 						break;
 				}
 			});
@@ -1349,8 +1378,13 @@ var u = {
 				
 				_comp = ((_name != _en2_name) ? _en2_name + '_' : '') + _en2_type;
 				
-				Try.these(function() { $('#form_' + _comp).hide(); });
-				Try.these(function() { $('#button_' + _comp).removeClass('button_s'); });
+				Try.these(function() {
+					$('#form_' + _comp).hide();
+				});
+				
+				Try.these(function() {
+					$('#button_' + _comp).removeClass('button_s');
+				});
 			});
 		});
 		
@@ -1439,15 +1473,15 @@ var u = {
 	},
 	selectbox: function(e) {
 		el = _.e(e);
-		Event.stop(e);
+		e.preventDefault();
 		
 		re = _.split(el.id, '_');
 		re.pop();
 		_name = re.pop();
 		
 		if (_name == 'assoc') {
-			if ($('_selectbox')) {
-				$('_selectbox').remove();
+			if ($('#_selectbox')) {
+				$('#_selectbox').remove();
 				return;
 			}
 			
@@ -1463,19 +1497,19 @@ var u = {
 		}
 		
 		if (response == EE.OK) {
-			if ($('_selectbox')) {
-				$('_selectbox').remove();
+			if ($('#_selectbox')) {
+				$('#_selectbox').remove();
 			}
 			return _.tab.refresh();
 		}
 		
-		if (!$('_selectbox')) {
+		if (!$('#_selectbox')) {
 			box = Builder.node('div', {id: '_selectbox'});
 			document.body.appendChild(box);
 		}
 		
-		_a = $('button_assoc_create').cumulativeOffset();
-		$('_selectbox').setStyle({top: _a[0] + 'px', left: (_a[1] + 20) + 'px'}).addClass('selectbox').update(response);
+		_a = $('#button_assoc_create').cumulativeOffset();
+		$('#_selectbox').css({top: _a[0] + 'px', left: (_a[1] + 20) + 'px'}).addClass('selectbox').html(response);
 		return;
 	},
 	liview: function(e) {
@@ -1592,7 +1626,7 @@ var u = {
 		}
 		
 		response = _.replacement(response, 'w9', '');
-		$('wait_' + _name + '_input').update(response);
+		$('#wait_' + _name + '_input').html(response);
 	},
 	
 	modify: function(e) {
@@ -1624,8 +1658,8 @@ var u = {
 		_name = re[0];
 		update_in = 'wait_' + _name + '_modify';
 		
-		$$('#form_' + _name + '_create').invoke('hide');
-		$$('#form_' + _name + '_field_create').invoke('hide');
+		$('#form_' + _name + '_create').hide();
+		$('#form_' + _name + '_field_create').hide();
 		
 		if (!_.empty(u.last_modify) && u.last_modify != 'form_' + _name + '_modify') {
 			$(u.last_modify).hide();
@@ -1637,7 +1671,7 @@ var u = {
 		switch (_name) {
 			case 'cat':
 			case 'groups':
-				var ret = json_decode(response);
+				var ret = $.evalJSON(response);
 				break;
 		}
 		
@@ -1655,7 +1689,7 @@ var u = {
 				_.v('r_color', ret.color);
 				break;
 			default:
-				$(update_in).update(response);
+				$(update_in).html(response);
 				break;
 		}
 		
@@ -1742,7 +1776,7 @@ var u = {
 		
 		switch (_name) {
 			default:
-				$(_.glue(re, '_')).hide();
+				$('#' + _.glue(re, '_')).hide();
 		
 				Try.these(function() {
 					if ($(_.li('contact')).len() == 1) {
@@ -1758,11 +1792,7 @@ var u = {
 			case 'types':
 			case 'store':
 			case 'assoc':
-			case 'warranty':
 				return;
-				break;
-			case 'brands':
-				_.timeout(_.reload, 0.5);
 				break;
 			default:
 				_.timeout(_.tab.refresh, 0.5);
@@ -1790,7 +1820,7 @@ var ul = {
 				Try.these(function() { $('#' + p + 'remove_' + row[2]).click(ul.remove); });
 
 				if (a == 'contact') {
-					Try.these(function() { $(p + 'status_' + row[2]).click(ul.contact_status); });
+					Try.these(function() { $('#' + p + 'status_' + row[2]).click(ul.contact_status); });
 				}
 			});
 		});
@@ -1805,9 +1835,16 @@ var ul = {
 		}
 		
 		if (_sa != _sb) {
-			Try.these(function() { $('#' + _sa + '_edit').hide(); });
-			Try.these(function() { $('#b' + _sa + '_edit').removeClass('button_s').hide(); });
-			Try.these(function() { $('#' + _sb + '_add').hide(); $('b' + _sb + '_add').removeClass('button_s'); });
+			Try.these(function() {
+				$('#' + _sa + '_edit').hide();
+			});
+			Try.these(function() {
+				$('#b' + _sa + '_edit').removeClass('button_s').hide();
+			});
+			Try.these(function() {
+				$('#' + _sb + '_add').hide();
+				$('#b' + _sb + '_add').removeClass('button_s');
+			});
 		}
 		
 		ul.watch_fx();
@@ -1817,12 +1854,16 @@ var ul = {
 				Try.these(function() {
 					$('#' + ul.last_create + 'x_add').unbind('click', ul.watch_fx);
 				});
-				//_.timeout(function() { $('b' + ul.last_create + '_add').removeClass('button_s'); }, 0.5);
+				
+				_.timeout(function() {
+					$('#b' + ul.last_create + '_add').removeClass('button_s');
+				}, 0.5);
 				ul.last_create = '';
 			}
 			
-			Try.these(function() { $('#' + _sa + 'x_add').click(ul.watch_fx); });
-			$('b' + _sa + '_add').addClass('button_s');
+			Try.these(function() {
+				$('#' + _sa + 'x_add').click(ul.watch_fx);
+			});
 			ul.last_create = _sa;
 			
 			_.form.first(_sa + '_add');
@@ -1844,7 +1885,7 @@ var ul = {
 			
 			if (_sa == 'v') {
 				Try.these(function() {
-					$('field_id')._change(ul.v_add_change);
+					$('#field_id').change(ul.v_add_change);
 					ul.v_add_change();
 				});
 			}
@@ -1861,7 +1902,7 @@ var ul = {
 			case 'c':
 			case 'r':
 				$('#' + _sa + '_add').hide();
-				$(_sa + '_add').reset();
+				$('#' + _sa + '_add').clear();
 				_.timeout(_.reload, 0.5);
 				break;
 			case 'g':
@@ -1909,7 +1950,7 @@ var ul = {
 		}
 		
 		response = _.replacement(response, 'w9', 'w6');
-		$('v_add_input').update(response);
+		$('#v_add_input').html(response);
 	},
 	
 	modify: function() {
@@ -2025,7 +2066,7 @@ var ul = {
 		switch (v_hide) {
 			case 'g':
 				this.callback = function(t) {
-					$(_.glue(z, '_')).update(t.responseText);
+					$('#' + _.glue(z, '_')).html(t.responseText);
 				};
 				
 				z = _.split($(p).parentNode.id, '_');
@@ -2042,7 +2083,7 @@ var ul = {
 			default:
 				if (response == EE.OK) {
 					$('#b' + v_hide + '_edit').hide().removeClass('button_s');
-					$(v_hide + '_edit').hide();
+					$('#' + v_hide + '_edit').hide();
 					_.timeout(_.tab.refresh, 0.5);
 				};
 				break;
@@ -2124,7 +2165,7 @@ var ul = {
 			return _.error.show(response);
 		}
 		
-		$('v_add').hide();
+		$('#v_add').hide();
 		
 		Try.these(function() {
 			if (!$('contact') || !$(_.li('contact')).len()) {
@@ -2160,9 +2201,9 @@ var ul = {
 		v3 = (v2 == 'p') ? 'c': v4;
 		
 		try {
-			$(v2 + 'row_' +  v[1] + '_' + v[2]).remove();
+			$('#' + v2 + 'row_' +  v[1] + '_' + v[2]).remove();
 			$(el).removeClass('relevant');
-			try { $(v3 + '_edit').hide(); } catch (h) { }
+			try { $('#' + v3 + '_edit').hide(); } catch (h) { }
 			ul.last_liview[v2] = '';
 			return;
 		} catch (h) { }
@@ -2181,7 +2222,7 @@ var ul = {
 				
 				$('#' + s_liview + j_liview).remove();
 				$('#' + f_liview + j_liview).removeClass('relevant');
-				$(v3 + '_edit').hide();
+				$('#' + v3 + '_edit').hide();
 				ul.last_liview[v2] = '';
 			}
 		} catch (h) { }
@@ -2192,5 +2233,129 @@ var ul = {
 		$(el).insert_after(t.responseText).addClass('relevant');
 		ul.last_liview[v2] = el.id;
 		return;
+	}
+}
+
+var computer = {
+	search: {
+		element: 1,
+		total: 0,
+		row: '',
+		
+		startup: function(e) {
+			computer.search.row = _.code('template_row');
+			$('#template_row').remove();
+			
+			computer.search.duplicate();
+		},
+		duplicate: function(e) {
+			if (computer.search.total) {
+				var _c = _.replacement(_.e(e).id, 'row_add_', '');
+				var _c2 = '#vinput_' + _c;
+				if (_.empty($F(_c2))) {
+					return $(_c2).focus();
+				}
+			}
+			a = _.replacement(computer.search.row, /_dd/g, '_' + computer.search.element);
+			a = _.replacement(a, /_ee/g, (computer.search.element - 1));
+			
+			if (!computer.search.total) {
+				$('#search_list').insert_top(a);
+			} else {
+				$('#srow_' + _c).insert_after(a);
+			};
+			
+			$('srow_' + computer.search.element).addClass('m_top_mid');
+			$('#row_add_' + computer.search.element).click(computer.search.duplicate);
+			$('#row_rem_' + computer.search.element).click(computer.search.remove);
+			
+			$('#table_' + computer.search.element).change(computer.search.table);
+			$('#field_' + computer.search.element).change(computer.search.table_field);
+			
+			Try.these(function() {
+				$('#vbox_' + computer.search.element).change(computer.search.vbox_change);
+			});
+			
+			$(':input').each(function() {
+				this.attr('autocomplete', 'off');
+			});
+			
+			if (computer.search.element == 1) {
+				Try.these(function() {
+					$('#svbox_' + computer.search.element).hide();
+				});
+			}
+			
+			computer.search.element++;
+			computer.search.total++;
+			
+			return computer.search.focus();
+		},
+		focus: function() {
+			return $('#vinput_' + (computer.search.element - 1)).focus();
+		},
+		remove: function(e) {
+			a = _.replacement(_.e(e).id, 'row_rem_', '');
+			if (computer.search.total < 2) {
+				$('#vinput_' + a).val('').focus();
+				return;
+			}
+			
+			$('#srow_' + a).remove();
+			computer.search.total--;
+			return;
+		},
+		table: function(e) {
+			el = _.e(e);
+			s = _.form.selectedindex(el);
+			if (s) _.call(_.config.read('computer_search_stable'), computer.search.table_callback, {table: s});
+			return false;
+		},
+		table_callback: function(t) {
+			var response = t.responseText;
+			if (_.error.has(response)) {
+				return _.error.show(response);
+			}
+			var ret = $.evalJSON(response);
+			
+			table = _.replacement(el.id, 'table_', '');
+			_.input.select.clear('field_' + table);
+			
+			ret.each(function(i) {
+				$('#field_' + table).insert_bottom(Builder.node('option', {value: i.r_id}, _.entity_decode(i.r_name)));
+			});
+			
+			s_option = _.form.firstOption('#field_' + table);
+			if (!s_option) {
+				$w('rfield random').each(function(i) {
+					$('#' + i + '_' + table).html('&nbsp;');
+				});
+			}
+			
+			$('#field_' + table).selectindex_t(s_option[1]);
+			computer.search.table_field('#field_' + table);
+			return false;
+		},
+		table_field: function(e) {
+			el = _.e(e);
+			s = _.form.selectedindex(el);
+			if (s) {
+				_.call(_.config.read('computer_search_sfield'), computer.search.table_field_callback, {field: s});
+			}
+			return;
+		},
+		table_field_callback: function(t) {
+			response = t.responseText;
+			field = _.replacement(el.id, 'field_', '');
+			response = _.replacement(response, /_dd/g, '_' + field);
+			response = _.replacement(response, /_ee/g, (computer.search.element - 1));
+			$('#random_' + field).html(response);
+			
+			$(':input').each(function() { this.attr('autocomplete', 'off'); });
+			return $('#vinput_' + field).focus();
+		},
+		vbox_change: function(e) {
+			return $('#vinput_' + _.replacement(_.e(e).id, 'vbox_', ''));
+		}
 	}
 }
