@@ -23,9 +23,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-if (!empty($_FILES)) {
+if (!empty($_FILES))
+{
 	$tempFile = $_FILES['Filedata']['tmp_name'];
-	$targetPath = $_SERVER['DOCUMENT_ROOT'] . $_REQUEST['folder'] . '/';
+	
+	$exp = explode('/', $_SERVER['SCRIPT_NAME']);
+	
+	$targetPath = $_SERVER['DOCUMENT_ROOT'];
+	$targetPath .= implode('/', array_splice($exp, 0, -3));
+	$targetPath .= '/f/';
+	
+	die($targetPath);
+	
+	//$targetPath = $_SERVER['DOCUMENT_ROOT'] . $_REQUEST['folder'] . '/';
 	$targetFile =  str_replace('//','/',$targetPath) . $_FILES['Filedata']['name'];
 	
 	// $fileTypes  = str_replace('*.','',$_REQUEST['fileext']);
@@ -37,10 +47,11 @@ if (!empty($_FILES)) {
 		// Uncomment the following line if you want to make the directory if it doesn't exist
 		// mkdir(str_replace('//','/',$targetPath), 0755, true);
 		
-		move_uploaded_file($tempFile,$targetFile);
-		echo str_replace($_SERVER['DOCUMENT_ROOT'],'',$targetFile);
+		move_uploaded_file($tempFile, $targetFile);
+		echo str_replace($_SERVER['DOCUMENT_ROOT'], '', $targetFile);
 	// } else {
 	// 	echo 'Invalid file type.';
 	// }
 }
+
 ?>

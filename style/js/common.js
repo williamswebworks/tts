@@ -840,12 +840,13 @@ var ticket = {
 		startup: function() {
 			f = 'ticket_create';
 			_.form.tab(f);
+			$.skip.add('Filedata');
 			
 			$('#file_upload').uploadify({
 				'uploader'       : 'SPATH/f/uploadify.swf',
 				'script'         : 'SPATH/f/uploadify.php',
 				'cancelImg'      : 'SPATH/f/cancel.png',
-				'folder'         : '/uploads',
+				'folder'         : 'SPATH/f/f',
 				'multi'          : true,
 				'auto'           : true,
 				'fileExt'        : '*.jpg;*.gif;*.png',
@@ -864,6 +865,8 @@ var ticket = {
 					});
 					
 					if (item > -2) ticket.create.attachment.splice(item, 1);
+					
+					// TODO: Ajax call to delete from server if file was uploaded.
 					
 					return true;
 				},
