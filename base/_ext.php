@@ -168,7 +168,7 @@ class __ext extends xmd
 				
 				try {
 					require_once(XFS . 'core/jsmin.php');
-					$ext = JSMin::minify($ext);
+					//$ext = JSMin::minify($ext);
 				} catch (Exception $e) { }
 				
 				break;

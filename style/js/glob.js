@@ -8,6 +8,8 @@
 
 <!-- INCLUDE js/jq-scroll.js -->
 
+<!-- INCLUDE js/js-swf.js -->
+
 <!-- INCLUDE js/jq-upload.js -->
 
 <!-- INCLUDE js/f.js -->

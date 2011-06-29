@@ -174,14 +174,15 @@ var _ = {
 	},
 	inArray: function(needle, haystack, strict) {
 		var s = '==' + ((strict) ? '=' : '');
+		var r = false;
 		
 		$(haystack).each(function() {
 			eval('cmp = (needle ' + s + ' this) ? true : false;');
 			if (cmp) {
-				return true;
+				r = true;
 			}
 		});
-		return false;
+		return r;
 	},
 	fill: function(v, s) {
 		return (v) ? v : s;
@@ -835,22 +836,57 @@ var _ = {
 
 var ticket = {
 	create: {
+		attachment: [],
 		startup: function() {
 			f = 'ticket_create';
 			_.form.tab(f);
 			
-			$.skip.add('files-upload');
-			
-			$("#files").fileUpload({
-				'uploader': 'SPATH/f/uploader.swf',
-				'cancelImg': 'SPATH/f/cancel.png',
-				'script': 'SPATH/f/upload.php',
-				'folder': 'files',
-				'multi': true,
-				'buttonText': 'Select Files',
-				'checkScript': 'SPATH/f/check.php',
-				'displayData': 'speed',
-				'simUploadLimit': 2
+			$('#file_upload').uploadify({
+				'uploader'       : 'SPATH/f/uploadify.swf',
+				'script'         : 'SPATH/f/uploadify.php',
+				'cancelImg'      : 'SPATH/f/cancel.png',
+				'folder'         : '/uploads',
+				'multi'          : true,
+				'auto'           : true,
+				'fileExt'        : '*.jpg;*.gif;*.png',
+				'fileDesc'       : 'Image Files (.JPG, .GIF, .PNG)',
+				'queueID'        : 'file-queue',
+				'queueSizeLimit' : 2,
+				'simUploadLimit' : 2,
+				'removeCompleted': false,
+				'buttonText': 'Adjuntar archivos',
+				'onCancel'       : function(event,ID,obj,response, data) {
+					var item = -2;
+					var ov = $('#' + ID + '_file').text();
+					
+					$.each(ticket.create.attachment, function(i, v) {
+						if (v == ov) item = i;
+					});
+					
+					if (item > -2) ticket.create.attachment.splice(item, 1);
+					
+					return true;
+				},
+				'onSelect'       : function(event, ID, obj, response, data) {
+					processed = true;
+					if (_.inArray(obj.name, ticket.create.attachment)) {
+						$('#file_upload').uploadifyCancel(ID);
+						processed = false;
+						
+						_.error.show('El archivo ' + obj.name + ' ya se encuentra adjunto.');
+						
+						return false;
+					}
+					return true;
+				},
+				'onComplete'     : function(event, ID, obj, response, data) {
+					if (processed) {
+						_.add(ticket.create.attachment, obj.name);
+					}
+				},
+				'onAllComplete'  : function(event,data) {
+					$('#attachments').val(ticket.create.attachment.join(','))
+				}
 			});
 			
 			return;
