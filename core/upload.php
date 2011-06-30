@@ -141,15 +141,13 @@ class upload
 	private $errorlist = array();
 	private $_default = array();
 	private $remove_queue = array();
-	private $ext_blacklist;
 	private $watermark_path;
+	public $ext_blacklist;
 	
 	// You can get your own API key at http://www.picnik.com/info/api
 	private $picnik_api = '';
 	private $picnik_url = 'http://www.picnik.com/service';
 	private $picnik_arg = array();
-	
-	//'../home/style/images/w.png'
 	
 	public function __construct()
 	{

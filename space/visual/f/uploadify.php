@@ -33,9 +33,6 @@ if (!empty($_FILES))
 	$targetPath .= implode('/', array_splice($exp, 0, -3));
 	$targetPath .= '/f/';
 	
-	die($targetPath);
-	
-	//$targetPath = $_SERVER['DOCUMENT_ROOT'] . $_REQUEST['folder'] . '/';
 	$targetFile =  str_replace('//','/',$targetPath) . $_FILES['Filedata']['name'];
 	
 	// $fileTypes  = str_replace('*.','',$_REQUEST['fileext']);
@@ -47,7 +44,11 @@ if (!empty($_FILES))
 		// Uncomment the following line if you want to make the directory if it doesn't exist
 		// mkdir(str_replace('//','/',$targetPath), 0755, true);
 		
-		move_uploaded_file($tempFile, $targetFile);
+		if (!@move_uploaded_file($tempFile, $targetFile))
+		{
+			echo '#500';
+		}
+		
 		echo str_replace($_SERVER['DOCUMENT_ROOT'], '', $targetFile);
 	// } else {
 	// 	echo 'Invalid file type.';

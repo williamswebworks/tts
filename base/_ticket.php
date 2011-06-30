@@ -674,7 +674,7 @@ class __ticket extends xmd
 		
 		if (_button() && is_ghost())
 		{
-			$v = $this->__(array('cat' => 1, 'ticket_group' => 0, 'ticket_title', 'ticket_text', 'ticket_username'));
+			$v = $this->__(array('cat' => 1, 'ticket_group' => 0, 'ticket_title', 'ticket_text', 'ticket_username', 'attachments'));
 			$t_contact = $user->v();
 			
 			if (f($v['ticket_username']) && _auth_get('ticket_create_admin'))
@@ -724,6 +724,56 @@ class __ticket extends xmd
 			$v['ticket_id'] = _sql_nextid($sql);
 			
 			$v = array_merge($v, $v2);
+			
+			if (f($v['attachments']))
+			{
+				$attachments = explode(',', $v['attachments']);
+				$location = XFS . 'space/f/';
+				
+				if (@is_dir($location))
+				{
+					@include(XFS . 'core/upload.php');
+					$upload = new upload();
+					
+					$umask = umask(0);
+					
+					$i = 0;
+					foreach ($attachments as $row)
+					{
+						if (@file_exists($location . $row))
+						{
+							$extension = _extension($row);
+							
+							if (preg_match('/\.(' . $upload->ext_blacklist . ')$/', strtolower($row)))
+							{
+								$extension = 'txt';
+							}
+							
+							$filepath = _filename('_' . $v['code'] . '_' . $i, $extension);
+							
+							@rename($location . $row, $location . $filepath);
+							$upload->chmod($location . $filepath);
+							
+							$insert_attach = array(
+								'ticket' => $v['ticket_id'],
+								'name' => $filepath,
+								'mime' => mime_content_type($location . $filepath),
+								'extension' => $extension,
+								'size' => filesize($location . $filepath),
+								'checksum' => md5_file($location . $filepath),
+								'downloads' => 0,
+								'time' => time()
+							);
+							$sql = 'INSERT INTO _tickets_attach' . _build_array('INSERT', prefix('attach', $insert_attach));
+							_sql($sql);
+							
+							$i++;
+						}
+					}
+					
+					@umask($umask);
+				}
+			}
 			
 			if ($v['parent'])
 			{
