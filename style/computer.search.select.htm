@@ -19,8 +19,9 @@
 <script{SCRIPT_TYPE}>
 {CDATA_BEGIN}
 <!-- IF IN == 'calendar' -->
-$('vinput_dd').calendar();
+$('#vinput_dd').datepicker();
+//$('#vinput_dd').calendar();
 <!-- ENDIF -->
-_._efocus('vinput_dd');
+$('#vinput_dd').val('').focus();
 {CDATA_END}
 </script>

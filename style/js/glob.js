@@ -2,6 +2,10 @@
 
 <!-- INCLUDE js/jq-ui.js -->
 
+<!-- INCLUDE js/jq-widget.js -->
+
+<!-- INCLUDE js/jq-datepicker.js -->
+
 <!-- INCLUDE js/jq-string.js -->
 
 <!-- INCLUDE js/jq-json.js -->

@@ -34,11 +34,11 @@
 <!-- BEGIN inputs -->
 <!-- BEGIN row -->
 <!-- IF row.TYPE == 'calendar' -->
-$('{row.NAME}').calendar();
+$('#{row.NAME}').calendar();
 <!-- ENDIF -->
 
 <!-- IF ! row.S_ROW_COUNT -->
-_._focus('{row.NAME}');
+$('#{row.NAME}').focus();
 <!-- ENDIF -->
 <!-- END row -->
 <!-- END inputs -->

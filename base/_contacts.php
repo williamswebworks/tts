@@ -137,7 +137,7 @@ class __contacts extends xmd
 		{
 			gfatal();
 			
-			$v = $this->__(array('autos' => 0, 'active' => 0, 'type' => 0, 'admin' => 0, 'firstname', 'lastname', 'show', 'username', 'gender'), 'contact');
+			$v = $this->__(array('autos' => 0, 'active' => 0, 'type' => 0, 'admin' => 0, 'firstname', 'lastname', 'show', 'username', 'gender', 'email', 'password'), 'contact');
 			$v['contact_username'] = _alias($v['contact_username']);
 			
 			$sql = 'SELECT user_id
@@ -170,8 +170,9 @@ class __contacts extends xmd
 				'username' => $v['contact_username'],
 				'firstname' => $v['contact_firstname'],
 				'lastname' => $v['contact_lastname'],
+				'password' => _password($v['contact_password']),
 				'name_show' => $v['contact_show'],
-				'email' => $v['contact_username'] . '@' . $core->v('domain'),
+				'email' => (f($v['contact_email'])) ? $v['contact_email'] : $v['contact_username'] . '@' . $core->v('domain'),
 				'gender' => $v['contact_gender'],
 				'date' => time(),
 				'dateformat' => 'd M Y H:i',
@@ -834,9 +835,9 @@ class __contacts extends xmd
 		$sql = 'SELECT *
 			FROM _search_tables
 			INNER JOIN _search_categories ON table_cat = category_id
-				WHERE category_alias = ?
-			WHERE table_id = ?';
-		if (!_fieldrow(sql_filter($sql, $v['table'], $this->m())))
+			WHERE category_alias = ?
+				AND table_id = ?';
+		if (!_fieldrow(sql_filter($sql, $this->m(), $v['table'])))
 		{
 			$this->_error('#E_COMPUTER_NO_FIELD');
 		}
@@ -995,11 +996,18 @@ class __contacts extends xmd
 	{
 		global $user;
 		
+		/*$sql = 'SELECT *
+			FROM _members_store
+			INNER JOIN _members_fields ON field_id = a_field
+			WHERE field_show = ?
+				AND a_assoc = ?
+			ORDER BY field_display';
+		*/
 		$sql = 'SELECT *
 			FROM _members_store
 			INNER JOIN _members_fields ON field_id = a_field
-				WHERE field_show = ?
-			WHERE a_assoc = ?
+			WHERE field_show = ?
+				AND a_assoc = ?
 			ORDER BY field_display';
 		$fields = _rowset(sql_filter($sql, 1, $v['uid']));
 		

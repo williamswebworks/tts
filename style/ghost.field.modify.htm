@@ -40,8 +40,8 @@
 <script{SCRIPT_TYPE}>
 {CDATA_BEGIN}
 <!-- IF TYPE == 'calendar' -->
-$('{INPUT_NAME}').calendar();
+$('#{INPUT_NAME}').calendar();
 <!-- ENDIF -->
-_._focus('{INPUT_NAME}');
+$('#{INPUT_NAME}').val('').focus();
 {CDATA_END}
 </script>

@@ -28,8 +28,9 @@
 <script{SCRIPT_TYPE}>
 {CDATA_BEGIN}
 <!-- IF TYPE == 'calendar' -->
-$('__{NAME}_{COMPUTER}').calendar();
+$('#__{NAME}_{COMPUTER}').datepicker();
+//$('#__{NAME}_{COMPUTER}').calendar();
 <!-- ENDIF -->
-_._focus('__{NAME}_{COMPUTER}');
+$('#__{NAME}_{COMPUTER}').val('').focus();
 {CDATA_END}
 </script>

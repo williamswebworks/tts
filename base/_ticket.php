@@ -615,6 +615,23 @@ class __ticket extends xmd
 			);
 		}
 		
+		$sql = 'SELECT *
+			FROM _tickets_attach
+			WHERE attach_ticket = ?
+			ORDER BY attach_name';
+		$attachments = _rowset(sql_filter($sql, $d['ticket_id']));
+		
+		foreach ($attachments as $i => $row)
+		{
+			if (!$i) _style('attachments');
+			
+			_style('attachments.row', array(
+				'ATTACH_LINK' => _link('space/f/' . $row['attach_name'], false, false),
+				'ATTACH_NAME' => $row['attach_name'],
+				'ATTACH_SIZE' => _filesize($row['attach_size']))
+			);
+		}
+		
 		$author_fullname = _fullname($ticket_author);
 		
 		$sql = 'SELECT assign_status

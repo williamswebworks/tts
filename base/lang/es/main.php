@@ -210,6 +210,7 @@ $lang = array(
 	'TICKET_ASSIGNED_TECH' => 'T&eacute;cnico asignado',
 	'TICKET_SIGNATURE' => 'Nombre y firma de conformidad',
 	'TICKET_NO_CAT' => 'No hay categor&iacute;as en este grupo.',
+	'TICKET_ATTACHMENTS' => 'Archivos adjuntos',
 	
 	'TICKET_ETABLE_YES' => 'Crear reporte en tabla',
 	'TICKET_ETABLE_NO' => 'Crear reporte en listado',

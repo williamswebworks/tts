@@ -252,6 +252,17 @@
 		{V_TEXT}
 	</div>
 	
+	<!-- BEGIN attachments -->
+	<div class="m_top_mid _attach">
+		<p><strong>{L_TICKET_ATTACHMENTS}</strong></p>
+		<ul>
+		<!-- BEGIN row -->
+		<li><a href="{row.ATTACH_LINK}">{row.ATTACH_NAME} ({row.ATTACH_SIZE})</a></li>
+		<!-- END row -->
+		</ul>
+	</div>
+	<!-- END attachments -->
+	
 	<div class="m_top_mid">
 		<input type="button" class="button" id="add_note" value="{L_TICKET_ADD_NOTE}" />
 		

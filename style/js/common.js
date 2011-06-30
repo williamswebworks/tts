@@ -316,7 +316,7 @@ var _ = {
 		return false;
 	},
 	clear: function(e) {
-		$(e).update();
+		$(e).html();
 		$('#search-box').show();
 		
 		Try.these(function() {
@@ -661,14 +661,14 @@ var _ = {
 				$(this).click(_.input.option_callback);
 			});
 		},
-		option_callback: function(e) {
-			e = $(_.e(e));
-			a = array_key(_.split(Object.toHTML(e.hasClass()), ' '), 0);
+		option_callback: function() {
+			var e = $(this);
+			a = array_key(_.split(e.attr('class'), ' '), 0);
 			
 			$('.' + a).each(function() {
-				if (e.id === this.id)
+				if (e.attr('id') === this.id)
 				{
-					_.v(_.replacement(a, 'sf_option_', ''), _.replacement(this.id, 'option_', ''));
+					$(_.replacement(a, 'sf_option_', '')).val(_.replacement(this.id, 'option_', ''));
 					$(this).addClass('sf_selectd');
 				} else {
 					$(this).removeClass('sf_selectd');
@@ -749,39 +749,47 @@ var _ = {
 			_.tab.x(a[0], a[1], a[2], scr);
 			return false;
 		},
-		observe: function() {
-			$(this).filter('li').each(function() {
-				_.add(_.tab.ary, _.replacement(this.attr('id'), 'row_', ''));
+		observe: function(e) {
+			var e = $(e);
+			
+			$('li', e).each(function() {
+				_.add(_.tab.ary, _.replacement($(this).attr('id'), 'row_', ''));
 			});
 			
-			$(this).click(function(e) {
+			e.click(function(e) {
 				var $t = $(e.target);
+				
+				if ($t.is('div')) {
+					$t = $t.closest('li');
+				}
+				
 				if ($t.is('li')) _.tab.click($t);
 			});
 			return;
 		},
 		click: function(e) {
 			el = _.e(e);
-			tab_id = _.replacement(el.id, 'row_', '');
+			el_id = el.attr('id');
+			tab_id = _.replacement(el_id, 'row_', '');
 			
-			if (el.id == _.config.read('tab_last')) {
-				_.tab.remove(el.id + '_s', tab_id);
+			if (el_id == _.config.read('tab_last')) {
+				_.tab.remove(el_id + '_s', tab_id);
 				_.config.store('tab_last', '');
 			} else {
 				if (!_.empty(_.config.read('tab_last'))) {
 					_.tab.remove(_.config.read('tab_last') + '_s', _.replacement(_.config.read('tab_last'), 'row_', ''));
 				}
-				if (el.id != _.config.read('tab_last')) {
-					_.config.store('tab_last', el.id);
+				if (el_id != _.config.read('tab_last')) {
+					_.config.store('tab_last', el_id);
 				}
-				ff = _.replacement(_.code('tab_format'), /_dd/g, '_' + tab_id);
-				$(el).insert_after('<li id="' + el.id + '_s">' + ff + '</li>');
+				ff = _.replacement($('#tab_format').html(), /_dd/g, '_' + tab_id);
+				$(el).after('<li id="' + el_id + '_s">' + ff + '</li>');
 				
 				$w(_.config.read('xtab_tags')).each(function() {
 					$('#tab_' + this + '_' + tab_id).click(_.tab.z);
 				});
 				
-				_.tab.z('tab_general_' + tab_id);
+				_.tab.z('#tab_general_' + tab_id);
 			}
 			return;
 		},
@@ -825,7 +833,8 @@ var _ = {
 			return;
 		},
 		z: function(e) {
-			el = _.split(_.e(e).id, '_');
+			el = _.split($(_.e(e)).attr('id'), '_');
+			
 			return _.tab.x(el[2], _.replacement(_.replacement(_.config.read('u_tab'), '*', el[2]), '?', el[1]), el[1]);
 		}
 	},
@@ -1209,32 +1218,22 @@ var contacts = {
 			});
 			return;
 		},
-		observe: function(i) {
-			$(i).click(contacts.members.insert);
-		},
 		startup: function(e) {
 			$('#contact_firstname').keyup(contacts.members.nshow);
 			$('#contact_lastname').keyup(contacts.members.nshow);
 			
-			$('#form_contact .button').each(contacts.members.observe);
-			_.focus('form_contact');
-		},
-		nshow: function(e) {
-			_.v('contact_show', $F('contact_firstname') + ' ' + $F('contact_lastname'));
-		},
-		insert: function(e) {
-			var err = false;
-			$w('contact_firstname contact_lastname contact_show').each(function() {
-				if (_.empty($F(this))) {
-					err = true;
-					return _.focus('form_contact');
-				}
+			$('#form_contact .button').each(function() {
+				$(this).click(contacts.members.insert);
 			});
 			
-			if (err) return;
-			
-			_.v('contact_type', _.replacement(_.e(e).id, 'group_', ''));
-			return _.form.submit($('form_contact'), _.form.error_or_go, {submit: 1});
+			_.focus('#form_contact');
+		},
+		nshow: function(e) {
+			$('#contact_show').val($('#contact_firstname').val() + ' ' + $('#contact_lastname').val());
+		},
+		insert: function(e) {
+			$('#contact_type').val(_.replacement(_.e(e).id, 'group_', ''));
+			return _.form.submit($('#form_contact'), _.form.error_or_go, {submit: 1});
 		},
 		modify: function(e) {
 			id = _.replacement(_.e(e).id, 'm_modify_', '');
@@ -2282,7 +2281,7 @@ var computer = {
 		row: '',
 		
 		startup: function(e) {
-			computer.search.row = _.code('template_row');
+			computer.search.row = $('#template_row').html();
 			$('#template_row').remove();
 			
 			computer.search.duplicate();
@@ -2299,9 +2298,9 @@ var computer = {
 			a = _.replacement(a, /_ee/g, (computer.search.element - 1));
 			
 			if (!computer.search.total) {
-				$('#search_list').insert_top(a);
+				$('#search_list').before(a);
 			} else {
-				$('#srow_' + _c).insert_after(a);
+				$('#srow_' + _c).after(a);
 			};
 			
 			$('srow_' + computer.search.element).addClass('m_top_mid');
@@ -2316,7 +2315,7 @@ var computer = {
 			});
 			
 			$(':input').each(function() {
-				this.attr('autocomplete', 'off');
+				$(this).attr('autocomplete', 'off');
 			});
 			
 			if (computer.search.element == 1) {
@@ -2346,7 +2345,7 @@ var computer = {
 		},
 		table: function(e) {
 			el = _.e(e);
-			s = _.form.selectedindex(el);
+			s = $(el).val();
 			if (s) _.call(_.config.read('computer_search_stable'), computer.search.table_callback, {table: s});
 			return false;
 		},
@@ -2360,37 +2359,38 @@ var computer = {
 			table = _.replacement(el.id, 'table_', '');
 			_.input.select.clear('field_' + table);
 			
-			ret.each(function(i) {
-				$('#field_' + table).insert_bottom(Builder.node('option', {value: i.r_id}, _.entity_decode(i.r_name)));
+			$(ret).each(function() {
+				$('#field_' + table).append('<option value="' + this.r_id + '">' + _.entity_decode(this.r_name) + '</option>');
 			});
 			
 			s_option = _.form.firstOption('#field_' + table);
+			
 			if (!s_option) {
 				$w('rfield random').each(function(i) {
 					$('#' + i + '_' + table).html('&nbsp;');
 				});
 			}
 			
-			$('#field_' + table).selectindex_t(s_option[1]);
+			$('#field_' + table).val(s_option[0]);
 			computer.search.table_field('#field_' + table);
 			return false;
 		},
 		table_field: function(e) {
 			el = _.e(e);
-			s = _.form.selectedindex(el);
-			if (s) {
-				_.call(_.config.read('computer_search_sfield'), computer.search.table_field_callback, {field: s});
-			}
+			s = $(el).val();
+			
+			if (s) _.call(_.config.read('computer_search_sfield'), computer.search.table_field_callback, {field: s});
 			return;
 		},
 		table_field_callback: function(t) {
+			el = $(el);
 			response = t.responseText;
-			field = _.replacement(el.id, 'field_', '');
+			field = _.replacement(el.attr('id'), 'field_', '');
 			response = _.replacement(response, /_dd/g, '_' + field);
 			response = _.replacement(response, /_ee/g, (computer.search.element - 1));
 			$('#random_' + field).html(response);
 			
-			$(':input').each(function() { this.attr('autocomplete', 'off'); });
+			$(':input').each(function() { $(this).attr('autocomplete', 'off'); });
 			return $('#vinput_' + field).focus();
 		},
 		vbox_change: function(e) {

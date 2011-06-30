@@ -27,6 +27,14 @@
 		<dd><input type="text" id="contact_username" name="contact_username" size="60" maxlength="60" value="" /></dd>
 	</dl>
 	<dl>
+		<dt>{L_CONTACT_FIELDS_EMAIL}</dt>
+		<dd><input type="text" id="contact_email" name="contact_email" size="60" maxlength="60" value="" /></dd>
+	</dl>
+	<dl>
+		<dt>{L_PASSWORD}</dt>
+		<dd><input type="password" id="contact_password" name="contact_password" size="60" maxlength="60" value="" /></dd>
+	</dl>
+	<dl>
 		<dt>{L_GENDER}</dt>
 		<dd>{.OPTION:contact_gender:(1 => 'MALE', 2 => 'FEMALE')}</dd>
 	</dl>
@@ -158,7 +166,7 @@ $(contacts.members.startup);
 		u_tab: '{U_SEARCH_TAB}'
 	});
 	_.observe('clear_results', 'result_area');
-	_.tab.observe('list_results');
+	_.tab.observe('#list_results');
 	{CDATA_END}
 	</script>
 	<!-- END search -->

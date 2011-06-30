@@ -474,6 +474,9 @@ div.tooltip {
 .li_lines li {
 	border-top: 1px solid #AFC1A8;
 }
+#search-box li {
+	list-style: none;
+}
 
 .data_table {
 	border: 0;
@@ -523,7 +526,13 @@ div.tooltip {
 	background: #D5E0E1;
 	border-radius: 5px;
 }
-._text p {
+._attach {
+	padding-top: 8px;
+	padding-bottom: 1px;
+	background: #D5E0E1;
+	border-radius: 5px;
+}
+._text p, ._attach p {
 	padding: 0 8px 8px 8px;
 	margin: 0;
 }
@@ -1244,4 +1253,6 @@ html[xmlns] .float-holder { display: block; }
 	border-radius: 5px;
 }
 
-<!-- INCLUDE css/calendarview.css -->
+<!-- INCLUDE css/jq-ui-core.css -->
+<!-- INCLUDE css/jq-ui-dp.css -->
+<!-- INCLUDE css/jq-ui.css -->
