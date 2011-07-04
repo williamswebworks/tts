@@ -996,13 +996,6 @@ class __contacts extends xmd
 	{
 		global $user;
 		
-		/*$sql = 'SELECT *
-			FROM _members_store
-			INNER JOIN _members_fields ON field_id = a_field
-			WHERE field_show = ?
-				AND a_assoc = ?
-			ORDER BY field_display';
-		*/
 		$sql = 'SELECT *
 			FROM _members_store
 			INNER JOIN _members_fields ON field_id = a_field
