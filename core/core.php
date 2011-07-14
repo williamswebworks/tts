@@ -1,7 +1,5 @@
 <?php
 /*
-$Id: v 3.2 2009/11/12 10:43:00 $
-
 <NPT, a web development framework.>
 Copyright (C) <2009>  <NPT>
 
